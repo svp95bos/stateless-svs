@@ -6,7 +6,7 @@ public partial class StateMachine<TState, TTrigger>
     {
         internal IList<GuardCondition> Conditions { get; }
 
-        public static readonly TransitionGuard Empty = new(new Tuple<Func<object[], bool>, string>[0]);
+        public static readonly TransitionGuard Empty = new(Array.Empty<Tuple<Func<object[], bool>, string>>());
 
         #region Generic TArg0, ... to object[] converters
 

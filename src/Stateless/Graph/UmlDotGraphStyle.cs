@@ -40,7 +40,7 @@ public class UmlDotGraphStyle : GraphStyleBase
         stateRepresentationString = "\n"
             + $"subgraph \"cluster{stateInfo.NodeName}\"" + "\n"
             + "\t{" + "\n"
-            + $"\tlabel = \"{label.ToString()}\"" + "\n";
+            + $"\tlabel = \"{label}\"" + "\n";
 
         foreach (State subState in stateInfo.SubStates)
         {

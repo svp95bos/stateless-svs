@@ -1,10 +1,10 @@
 ﻿// #define WRITE_DOTS_TO_FOLDER
 
-using Stateless.Graph;
-using Stateless.Reflection;
-
 using System;
 using System.Collections.Generic;
+
+using Stateless.Graph;
+using Stateless.Reflection;
 
 using Xunit;
 

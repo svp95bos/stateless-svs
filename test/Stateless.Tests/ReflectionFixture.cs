@@ -1,9 +1,9 @@
-﻿using Stateless.Reflection;
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+
+using Stateless.Reflection;
 
 using Xunit;
 using Xunit.Sdk;

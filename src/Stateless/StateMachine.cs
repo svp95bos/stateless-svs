@@ -176,7 +176,7 @@ public partial class StateMachine<TState, TTrigger>
     /// <param name="trigger">The trigger to fire.</param>
     /// <exception cref="System.InvalidOperationException">The current state does
     /// not allow the trigger to be fired.</exception>
-    public void Fire(TTrigger trigger) => InternalFire(trigger, new object[0]);
+    public void Fire(TTrigger trigger) => InternalFire(trigger, Array.Empty<object>());
 
     /// <summary>
     /// Transition from the current state via the specified trigger.
@@ -551,7 +551,7 @@ public partial class StateMachine<TState, TTrigger>
     /// <param name="trigger">Trigger to test.</param>
     /// <param name="unmetGuards">Guard descriptions of unmet guards. If given trigger is not configured for current state, this will be null.</param>
     /// <returns>True if the trigger can be fired, false otherwise.</returns>
-    public bool CanFire(TTrigger trigger, out ICollection<string> unmetGuards) => CurrentRepresentation.CanHandle(trigger, new object[] { }, out unmetGuards);
+    public bool CanFire(TTrigger trigger, out ICollection<string> unmetGuards) => CurrentRepresentation.CanHandle(trigger, Array.Empty<object>(), out unmetGuards);
 
     /// <summary>
     /// A human-readable representation of the state machine.

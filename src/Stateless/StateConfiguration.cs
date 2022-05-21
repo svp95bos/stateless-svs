@@ -1578,7 +1578,7 @@ public partial class StateMachine<TState, TTrigger>
         /// that the trigger will cause a transition to.</param>            
         /// <returns>The receiver.</returns>
         /// <typeparam name="TArg0">Type of the first trigger argument.</typeparam>
-        public StateConfiguration PermitDynamicIf<TArg0>(TriggerWithParameters<TArg0> trigger, Func<TArg0, TState> destinationStateSelector) => PermitDynamicIf<TArg0>(trigger, destinationStateSelector, null, new Tuple<Func<bool>, string>[0]);
+        public StateConfiguration PermitDynamicIf<TArg0>(TriggerWithParameters<TArg0> trigger, Func<TArg0, TState> destinationStateSelector) => PermitDynamicIf<TArg0>(trigger, destinationStateSelector, null, Array.Empty<Tuple<Func<bool>, string>>());
 
         /// <summary>
         /// Accept the specified trigger and transition to the destination state, calculated

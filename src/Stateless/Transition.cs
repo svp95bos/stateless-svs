@@ -36,7 +36,7 @@ public partial class StateMachine<TState, TTrigger>
             Source = source;
             Destination = destination;
             Trigger = trigger;
-            Parameters = parameters ?? new object[0];
+            Parameters = parameters ?? Array.Empty<object>();
         }
 
         /// <summary>

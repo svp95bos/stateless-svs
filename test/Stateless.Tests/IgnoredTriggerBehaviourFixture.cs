@@ -10,7 +10,7 @@ public class IgnoredTriggerBehaviourFixture
     public void StateRemainsUnchanged()
     {
         StateMachine<State, Trigger>.IgnoredTriggerBehaviour ignored = new(Trigger.X, null);
-        Assert.False(ignored.ResultsInTransitionFrom(State.B, new object[0], out _));
+        Assert.False(ignored.ResultsInTransitionFrom(State.B, Array.Empty<object>(), out _));
     }
 
     [Fact]
