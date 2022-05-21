@@ -163,7 +163,7 @@ public partial class StateMachine<TState, TTrigger>
             }
             else if (!Includes(transition.Source))
             {
-                if (_superstate != null && !(transition is InitialTransition))
+                if (_superstate != null && transition is not InitialTransition)
                 {
                     _superstate.Enter(transition, entryArgs);
                 }
