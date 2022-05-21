@@ -574,7 +574,7 @@ public class ReflectionFixture
         Assert.Equal(0, binding.DynamicTransitions.Count()); // Dynamic transition count mismatch
     }
 
-    void VerifyMethodNames(IEnumerable<InvocationInfo> methods, string prefix, string body, State state, InvocationInfo.Timing timing)
+    static void VerifyMethodNames(IEnumerable<InvocationInfo> methods, string prefix, string body, State state, InvocationInfo.Timing timing)
     {
         Assert.Equal(1, methods.Count());
         InvocationInfo method = methods.First();
@@ -599,7 +599,7 @@ public class ReflectionFixture
         Assert.Equal(timing == InvocationInfo.Timing.Asynchronous, method.IsAsync);
     }
 
-    void VerifyMethodNameses(IEnumerable<InvocationInfo> methods, string prefix, string body, State state,
+    static void VerifyMethodNameses(IEnumerable<InvocationInfo> methods, string prefix, string body, State state,
         InvocationInfo.Timing timing, HashSet<string> suffixes)
     {
         Assert.Equal(suffixes.Count, methods.Count());

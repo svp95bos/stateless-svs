@@ -38,7 +38,7 @@ public class DotGraphFixture
         + $" init -> \"A\"[style = \"solid\"]" + Environment.NewLine
         + "}";
 
-    string Prefix(Style style)
+    static string Prefix(Style style)
     {
         string s;
 
@@ -50,7 +50,7 @@ public class DotGraphFixture
         return s.Replace("\n", Environment.NewLine);
     }
 
-    string Box(Style style, string label, List<string> entries = null, List<string> exits = null)
+    static string Box(Style style, string label, List<string> entries = null, List<string> exits = null)
     {
         string b;
 
@@ -82,7 +82,7 @@ public class DotGraphFixture
         return b.Replace("\n", Environment.NewLine);
     }
 
-    string Decision(Style style, string nodeName, string label)
+    static string Decision(Style style, string nodeName, string label)
     {
         string b;
 
@@ -91,7 +91,7 @@ public class DotGraphFixture
         return b.Replace("\n", Environment.NewLine);
     }
 
-    string Line(string from, string to, string label)
+    static string Line(string from, string to, string label)
     {
         string s = "\n\"" + from + "\" -> \"" + to
             + "\" [style=\"solid\"";
@@ -106,7 +106,7 @@ public class DotGraphFixture
         return s.Replace("\n", Environment.NewLine);
     }
 
-    string Subgraph(Style style, string graphName, string label, string contents)
+    static string Subgraph(Style style, string graphName, string label, string contents)
     {
         if (style != Style.UML)
         {

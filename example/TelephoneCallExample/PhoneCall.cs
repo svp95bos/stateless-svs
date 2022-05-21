@@ -67,11 +67,11 @@ public class PhoneCall
         _machine.OnTransitioned(t => Console.WriteLine($"OnTransitioned: {t.Source} -> {t.Destination} via {t.Trigger}({string.Join(", ", t.Parameters)})"));
     }
 
-    void OnSetVolume(int volume) => Console.WriteLine("Volume set to " + volume + "!");
+    static void OnSetVolume(int volume) => Console.WriteLine("Volume set to " + volume + "!");
 
-    void OnUnmute() => Console.WriteLine("Microphone unmuted!");
+    static void OnUnmute() => Console.WriteLine("Microphone unmuted!");
 
-    void OnMute() => Console.WriteLine("Microphone muted!");
+    static void OnMute() => Console.WriteLine("Microphone muted!");
 
     void OnDialed(string callee)
     {
@@ -79,9 +79,9 @@ public class PhoneCall
         Console.WriteLine("[Phone Call] placed for : [{0}]", _callee);
     }
 
-    void StartCallTimer() => Console.WriteLine("[Timer:] Call started at {0}", DateTime.Now);
+    static void StartCallTimer() => Console.WriteLine("[Timer:] Call started at {0}", DateTime.Now);
 
-    void StopCallTimer() => Console.WriteLine("[Timer:] Call ended at {0}", DateTime.Now);
+    static void StopCallTimer() => Console.WriteLine("[Timer:] Call ended at {0}", DateTime.Now);
 
     public void Mute() => _machine.Fire(Trigger.MuteMicrophone);
 

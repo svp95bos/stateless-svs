@@ -15,7 +15,7 @@ public class TriggerBehaviourFixture
         Assert.Equal(Trigger.X, transitioning.Trigger);
     }
 
-    protected bool False(params object[] args) => false;
+    protected static bool False(params object[] args) => false;
 
     [Fact]
     public void WhenGuardConditionFalse_GuardConditionsMetIsFalse()
@@ -26,7 +26,7 @@ public class TriggerBehaviourFixture
         Assert.False(transitioning.GuardConditionsMet());
     }
 
-    protected bool True(params object[] args) => true;
+    protected static bool True(params object[] args) => true;
 
     [Fact]
     public void WhenGuardConditionTrue_GuardConditionsMetIsTrue()

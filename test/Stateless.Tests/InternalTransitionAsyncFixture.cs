@@ -29,13 +29,13 @@ public class InternalTransitionAsyncFixture
         Assert.Equal(1, guardCalls);
     }
 
-    private bool PreCondition(ref int calls)
+    private static bool PreCondition(ref int calls)
     {
         calls++;
         return true;
     }
 
-    private async Task ChangePaymentState(Order order, PaymentStatus paymentStatus) => await Task.FromResult(order.PaymentStatus = paymentStatus);
+    private static async Task ChangePaymentState(Order order, PaymentStatus paymentStatus) => await Task.FromResult(order.PaymentStatus = paymentStatus);
 
     private enum OrderStatus { OrderPlaced }
     private enum PaymentStatus { Pending, Completed }

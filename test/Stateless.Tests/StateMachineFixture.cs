@@ -32,7 +32,7 @@ public class StateMachineFixture
             Enum.GetValues(typeof(Trigger)).Cast<Trigger>());
     }
 
-    void RunSimpleTest<TState, TTransition>(IEnumerable<TState> states, IEnumerable<TTransition> transitions)
+    static void RunSimpleTest<TState, TTransition>(IEnumerable<TState> states, IEnumerable<TTransition> transitions)
     {
         TState a = states.First();
         TState b = states.Skip(1).First();
