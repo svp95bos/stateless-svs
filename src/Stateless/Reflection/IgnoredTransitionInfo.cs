@@ -7,7 +7,7 @@
     {
         internal static IgnoredTransitionInfo Create<TState, TTrigger>(StateMachine<TState, TTrigger>.IgnoredTriggerBehaviour behaviour)
         {
-            var transition = new IgnoredTransitionInfo
+            IgnoredTransitionInfo transition = new()
             {
                 Trigger = new TriggerInfo(behaviour.Trigger),
                 GuardConditionsMethodDescriptions = (behaviour.Guard == null)

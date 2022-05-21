@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 using Xunit;
 
 
@@ -15,8 +16,8 @@ namespace Stateless.Tests
         [Fact]
         public void ImmediateEntryAProcessedBeforeEnterB()
         {
-            var record = new List<string>();
-            var sm = new StateMachine<State, Trigger>(State.A, FiringMode.Immediate);
+            List<string> record = new();
+            StateMachine<State, Trigger> sm = new(State.A, FiringMode.Immediate);
 
             sm.Configure(State.A)
                 .OnEntry(() => record.Add("EnterA"))
@@ -48,8 +49,8 @@ namespace Stateless.Tests
         [Fact]
         public void ImmediateEntryAProcessedBeforeEterB()
         {
-            var record = new List<string>();
-            var sm = new StateMachine<State, Trigger>(State.A, FiringMode.Queued);
+            List<string> record = new();
+            StateMachine<State, Trigger> sm = new(State.A, FiringMode.Queued);
 
             sm.Configure(State.A)
                 .OnEntry(() => record.Add("EnterA"))
@@ -81,8 +82,8 @@ namespace Stateless.Tests
         [Fact]
         public void ImmediateFireingOnEntryEndsUpInCorrectState()
         {
-            var record = new List<string>();
-            var sm = new StateMachine<State, Trigger>(State.A, FiringMode.Immediate);
+            List<string> record = new();
+            StateMachine<State, Trigger> sm = new(State.A, FiringMode.Immediate);
 
             sm.Configure(State.A)
                 .OnEntry(() => record.Add("EnterA"))

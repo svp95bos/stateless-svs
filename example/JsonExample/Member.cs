@@ -1,5 +1,5 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+
 using Stateless;
 
 namespace JsonExample
@@ -33,7 +33,7 @@ namespace JsonExample
         [JsonConstructor]
         private Member(string state, string name)
         {
-            var memberState = (MembershipState) Enum.Parse(typeof(MembershipState), state);
+            MembershipState memberState = (MembershipState)Enum.Parse(typeof(MembershipState), state);
             _stateMachine = new StateMachine<MembershipState, MemberTriggers>(memberState);
             Name = name;
 
@@ -86,6 +86,6 @@ namespace JsonExample
     }
 
 
-    
+
 
 }

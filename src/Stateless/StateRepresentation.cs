@@ -62,7 +62,7 @@
                 }
 
                 // Guard functions are executed here
-                var actual = possible
+                TriggerBehaviourResult[] actual = possible
                     .Select(h => new TriggerBehaviourResult(h, h.UnmetGuardConditions(args)))
                     .ToArray();
 
@@ -71,35 +71,39 @@
                     ?? TryFindLocalHandlerResultWithUnmetGuardConditions(actual);
 
                 if (handlerResult == null)
+                {
                     return false;
+                }
 
                 return !handlerResult.UnmetGuardConditions.Any();
             }
 
             private TriggerBehaviourResult TryFindLocalHandlerResult(TTrigger trigger, IEnumerable<TriggerBehaviourResult> results)
             {
-                var actual = results
+                List<TriggerBehaviourResult> actual = results
                     .Where(r => !r.UnmetGuardConditions.Any())
                     .ToList();
 
                 if (actual.Count <= 1)
+                {
                     return actual.FirstOrDefault();
+                }
 
-                var message = string.Format(StateRepresentationResources.MultipleTransitionsPermitted, trigger, _state);
+                string message = string.Format(StateRepresentationResources.MultipleTransitionsPermitted, trigger, _state);
                 throw new InvalidOperationException(message);
             }
 
             private static TriggerBehaviourResult TryFindLocalHandlerResultWithUnmetGuardConditions(IEnumerable<TriggerBehaviourResult> results)
             {
-                var result = results.FirstOrDefault(r => r.UnmetGuardConditions.Any());
+                TriggerBehaviourResult result = results.FirstOrDefault(r => r.UnmetGuardConditions.Any());
 
                 if (result != null)
                 {
-                    var unmetConditions = results.Where(r => r.UnmetGuardConditions.Any())
+                    IEnumerable<string> unmetConditions = results.Where(r => r.UnmetGuardConditions.Any())
                                                  .SelectMany(r => r.UnmetGuardConditions);
 
                     // Add other unmet conditions to first result
-                    foreach (var condition in unmetConditions)
+                    foreach (string condition in unmetConditions)
                     {
                         if (!result.UnmetGuardConditions.Contains(condition))
                         {
@@ -139,7 +143,9 @@
             public void Activate()
             {
                 if (_superstate != null)
+                {
                     _superstate.Activate();
+                }
 
                 ExecuteActivationActions();
             }
@@ -149,19 +155,25 @@
                 ExecuteDeactivationActions();
 
                 if (_superstate != null)
+                {
                     _superstate.Deactivate();
+                }
             }
 
             void ExecuteActivationActions()
             {
-                foreach (var action in ActivateActions)
+                foreach (ActivateActionBehaviour action in ActivateActions)
+                {
                     action.Execute();
+                }
             }
 
             void ExecuteDeactivationActions()
             {
-                foreach (var action in DeactivateActions)
+                foreach (DeactivateActionBehaviour action in DeactivateActions)
+                {
                     action.Execute();
+                }
             }
 
             public void Enter(Transition transition, params object[] entryArgs)
@@ -173,7 +185,9 @@
                 else if (!Includes(transition.Source))
                 {
                     if (_superstate != null && !(transition is InitialTransition))
+                    {
                         _superstate.Enter(transition, entryArgs);
+                    }
 
                     ExecuteEntryActions(transition, entryArgs);
                 }
@@ -213,14 +227,18 @@
 
             void ExecuteEntryActions(Transition transition, object[] entryArgs)
             {
-                foreach (var action in EntryActions)
+                foreach (EntryActionBehavior action in EntryActions)
+                {
                     action.Execute(transition, entryArgs);
+                }
             }
 
             void ExecuteExitActions(Transition transition)
             {
-                foreach (var action in ExitActions)
+                foreach (ExitActionBehavior action in ExitActions)
+                {
                     action.Execute(transition);
+                }
             }
             internal void InternalAction(Transition transition, object[] args)
             {
@@ -234,7 +252,9 @@
                     {
                         // Trigger handler found in this state
                         if (result.Handler is InternalTriggerBehaviour.Async)
+                        {
                             throw new InvalidOperationException("Running Async internal actions in synchronous mode is not allowed");
+                        }
 
                         internalTransition = result.Handler as InternalTriggerBehaviour.Sync;
                         break;
@@ -244,7 +264,11 @@
                 }
 
                 // Execute internal transition event handler
-                if (internalTransition == null) throw new ArgumentNullException("The configuration is incorrect, no action assigned to this internal transition.");
+                if (internalTransition == null)
+                {
+                    throw new ArgumentNullException("The configuration is incorrect, no action assigned to this internal transition.");
+                }
+
                 internalTransition.InternalAction(transition, args);
             }
             public void AddTriggerBehaviour(TriggerBehaviour triggerBehaviour)
@@ -259,23 +283,11 @@
 
             public StateRepresentation Superstate
             {
-                get
-                {
-                    return _superstate;
-                }
-                set
-                {
-                    _superstate = value;
-                }
+                get => _superstate;
+                set => _superstate = value;
             }
 
-            public TState UnderlyingState
-            {
-                get
-                {
-                    return _state;
-                }
-            }
+            public TState UnderlyingState => _state;
 
             public void AddSubstate(StateRepresentation substate)
             {
@@ -304,22 +316,18 @@
                     (_superstate != null && _superstate.IsIncludedIn(state));
             }
 
-            public IEnumerable<TTrigger> PermittedTriggers
-            {
-                get
-                {
-                    return GetPermittedTriggers();
-                }
-            }
+            public IEnumerable<TTrigger> PermittedTriggers => GetPermittedTriggers();
 
             public IEnumerable<TTrigger> GetPermittedTriggers(params object[] args)
             {
-                var result = TriggerBehaviours
+                IEnumerable<TTrigger> result = TriggerBehaviours
                     .Where(t => t.Value.Any(a => !a.UnmetGuardConditions(args).Any()))
                     .Select(t => t.Key);
 
                 if (Superstate != null)
+                {
                     result = result.Union(Superstate.GetPermittedTriggers(args));
+                }
 
                 return result;
             }

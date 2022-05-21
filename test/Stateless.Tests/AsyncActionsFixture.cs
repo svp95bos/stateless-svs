@@ -1,8 +1,8 @@
 #if TASKS
 
 using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Xunit;
 
@@ -14,26 +14,26 @@ namespace Stateless.Tests
         [Fact]
         public void StateMutatorShouldBeCalledOnlyOnce()
         {
-            var state = State.B;
-            var count = 0;
-            var sm = new StateMachine<State, Trigger>(() => state, (s) => { state = s; count++; });
+            State state = State.B;
+            int count = 0;
+            StateMachine<State, Trigger> sm = new(() => state, (s) => { state = s; count++; });
             sm.Configure(State.B).Permit(Trigger.X, State.C);
             sm.FireAsync(Trigger.X);
             Assert.Equal(1, count);
         }
-        
+
         [Fact]
         public async Task SuperStateShouldNotExitOnSubStateTransition_WhenUsingAsyncTriggers()
         {
             // Arrange.
-            var sm = new StateMachine<State, Trigger>(State.A);
-            var record = new List<string>();
+            StateMachine<State, Trigger> sm = new(State.A);
+            List<string> record = new();
 
             sm.Configure(State.A)
                 .OnEntryAsync(() => Task.Run(() => record.Add("Entered state A")))
                 .OnExitAsync(() => Task.Run(() => record.Add("Exited state A")))
                 .Permit(Trigger.X, State.B);
-            
+
             sm.Configure(State.B) // Our super state.
                 .InitialTransition(State.C)
                 .OnEntryAsync(() => Task.Run(() => record.Add("Entered super state B")))
@@ -49,11 +49,11 @@ namespace Stateless.Tests
                 .OnExitAsync(() => Task.Run(() => record.Add("Exited sub state D")))
                 .SubstateOf(State.B);
 
-            
+
             // Act.
             await sm.FireAsync(Trigger.X).ConfigureAwait(false);
             await sm.FireAsync(Trigger.Y).ConfigureAwait(false);
-            
+
             // Assert.
             Assert.Equal("Exited state A", record[0]);
             Assert.Equal("Entered super state B", record[1]);
@@ -66,14 +66,14 @@ namespace Stateless.Tests
         public void SuperStateShouldNotExitOnSubStateTransition_WhenUsingSyncTriggers()
         {
             // Arrange.
-            var sm = new StateMachine<State, Trigger>(State.A);
-            var record = new List<string>();
+            StateMachine<State, Trigger> sm = new(State.A);
+            List<string> record = new();
 
             sm.Configure(State.A)
                 .OnEntry(() => record.Add("Entered state A"))
                 .OnExit(() => record.Add("Exited state A"))
                 .Permit(Trigger.X, State.B);
-            
+
             sm.Configure(State.B) // Our super state.
                 .InitialTransition(State.C)
                 .OnEntry(() => record.Add("Entered super state B"))
@@ -89,11 +89,11 @@ namespace Stateless.Tests
                 .OnExit(() => record.Add("Exited sub state D"))
                 .SubstateOf(State.B);
 
-            
+
             // Act.
             sm.Fire(Trigger.X);
             sm.Fire(Trigger.Y);
-            
+
             // Assert.
             Assert.Equal("Exited state A", record[0]);
             Assert.Equal("Entered super state B", record[1]);
@@ -101,16 +101,16 @@ namespace Stateless.Tests
             Assert.Equal("Exited sub state C", record[3]);
             Assert.Equal("Entered sub state D", record[4]);
         }
-        
+
         [Fact]
         public async Task CanFireAsyncEntryAction()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
               .Permit(Trigger.X, State.B);
 
-            var test = "";
+            string test = "";
             sm.Configure(State.B)
               .OnEntryAsync(() => Task.Run(() => test = "foo"));
 
@@ -123,7 +123,7 @@ namespace Stateless.Tests
         [Fact]
         public void WhenSyncFireAsyncEntryAction()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
               .Permit(Trigger.X, State.B);
@@ -137,9 +137,9 @@ namespace Stateless.Tests
         [Fact]
         public async Task CanFireAsyncExitAction()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
-            var test = "";
+            string test = "";
             sm.Configure(State.A)
               .OnExitAsync(() => Task.Run(() => test = "foo"))
               .Permit(Trigger.X, State.B);
@@ -153,7 +153,7 @@ namespace Stateless.Tests
         [Fact]
         public void WhenSyncFireAsyncExitAction()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
               .OnExitAsync(() => TaskResult.Done)
@@ -165,9 +165,9 @@ namespace Stateless.Tests
         [Fact]
         public async Task CanFireInternalAsyncAction()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
-            var test = "";
+            string test = "";
             sm.Configure(State.A)
               .InternalTransitionAsync(Trigger.X, () => Task.Run(() => test = "foo"));
 
@@ -179,7 +179,7 @@ namespace Stateless.Tests
         [Fact]
         public void WhenSyncFireInternalAsyncAction()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
               .InternalTransitionAsync(Trigger.X, () => TaskResult.Done);
@@ -190,12 +190,12 @@ namespace Stateless.Tests
         [Fact]
         public async Task CanInvokeOnTransitionedAsyncAction()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
               .Permit(Trigger.X, State.B);
 
-            var test = "";
+            string test = "";
             sm.OnTransitionedAsync(_ => Task.Run(() => test = "foo"));
 
             await sm.FireAsync(Trigger.X).ConfigureAwait(false);
@@ -206,12 +206,12 @@ namespace Stateless.Tests
         [Fact]
         public async Task CanInvokeOnTransitionCompletedAsyncAction()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
               .Permit(Trigger.X, State.B);
 
-            var test = "";
+            string test = "";
             sm.OnTransitionCompletedAsync(_ => Task.Run(() => test = "foo"));
 
             await sm.FireAsync(Trigger.X).ConfigureAwait(false);
@@ -222,13 +222,13 @@ namespace Stateless.Tests
         [Fact]
         public async Task WillInvokeSyncOnTransitionedIfRegisteredAlongWithAsyncAction()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
               .Permit(Trigger.X, State.B);
 
-            var test1 = "";
-            var test2 = "";
+            string test1 = "";
+            string test2 = "";
             sm.OnTransitioned(_ => test1 = "foo1");
             sm.OnTransitionedAsync(_ => Task.Run(() => test2 = "foo2"));
 
@@ -241,13 +241,13 @@ namespace Stateless.Tests
         [Fact]
         public async Task WillInvokeSyncOnTransitionCompletedIfRegisteredAlongWithAsyncAction()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
               .Permit(Trigger.X, State.B);
 
-            var test1 = "";
-            var test2 = "";
+            string test1 = "";
+            string test2 = "";
             sm.OnTransitionCompleted(_ => test1 = "foo1");
             sm.OnTransitionCompletedAsync(_ => Task.Run(() => test2 = "foo2"));
 
@@ -260,7 +260,7 @@ namespace Stateless.Tests
         [Fact]
         public void WhenSyncFireAsyncOnTransitionedAction()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
               .Permit(Trigger.X, State.B);
@@ -273,7 +273,7 @@ namespace Stateless.Tests
         [Fact]
         public void WhenSyncFireAsyncOnTransitionCompletedAction()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
               .Permit(Trigger.X, State.B);
@@ -286,12 +286,12 @@ namespace Stateless.Tests
         [Fact]
         public async Task CanInvokeOnUnhandledTriggerAsyncAction()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
               .Permit(Trigger.X, State.B);
 
-            var test = "";
+            string test = "";
             sm.OnUnhandledTriggerAsync((s, t, u) => Task.Run(() => test = "foo"));
 
             await sm.FireAsync(Trigger.Z).ConfigureAwait(false);
@@ -301,7 +301,7 @@ namespace Stateless.Tests
         [Fact]
         public void WhenSyncFireOnUnhandledTriggerAsyncTask()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
                 .Permit(Trigger.X, State.B);
@@ -313,7 +313,7 @@ namespace Stateless.Tests
         [Fact]
         public void WhenSyncFireOnUnhandledTriggerAsyncAction()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
               .Permit(Trigger.X, State.B);
@@ -326,9 +326,9 @@ namespace Stateless.Tests
         [Fact]
         public async Task WhenActivateAsync()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
-            var activated = false;
+            bool activated = false;
             sm.Configure(State.A)
               .OnActivateAsync(() => Task.Run(() => activated = true));
 
@@ -340,9 +340,9 @@ namespace Stateless.Tests
         [Fact]
         public async Task WhenDeactivateAsync()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
-            var deactivated = false;
+            bool deactivated = false;
             sm.Configure(State.A)
               .OnDeactivateAsync(() => Task.Run(() => deactivated = true));
 
@@ -355,7 +355,7 @@ namespace Stateless.Tests
         [Fact]
         public void WhenSyncActivateAsyncOnActivateAction()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
               .OnActivateAsync(() => TaskResult.Done);
@@ -366,7 +366,7 @@ namespace Stateless.Tests
         [Fact]
         public void WhenSyncDeactivateAsyncOnDeactivateAction()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
               .OnDeactivateAsync(() => TaskResult.Done);
@@ -378,7 +378,7 @@ namespace Stateless.Tests
         [Fact]
         public async void IfSelfTransitionPermited_ActionsFire_InSubstate_async()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             bool onEntryStateBfired = false;
             bool onExitStateBfired = false;
@@ -404,7 +404,7 @@ namespace Stateless.Tests
         [Fact]
         public async void TransitionToSuperstateDoesNotExitSuperstate()
         {
-            StateMachine<State, Trigger> sm = new StateMachine<State, Trigger>(State.B);
+            StateMachine<State, Trigger> sm = new(State.B);
 
             bool superExit = false;
             bool superEntry = false;
@@ -430,7 +430,7 @@ namespace Stateless.Tests
         public async void IgnoredTriggerMustBeIgnoredAsync()
         {
             bool nullRefExcThrown = false;
-            var stateMachine = new StateMachine<State, Trigger>(State.B);
+            StateMachine<State, Trigger> stateMachine = new(State.B);
             stateMachine.Configure(State.A)
                 .Permit(Trigger.X, State.C);
 
@@ -443,7 +443,7 @@ namespace Stateless.Tests
                 // >>> The following statement should not throw a NullReferenceException
                 await stateMachine.FireAsync(Trigger.X);
             }
-            catch (NullReferenceException )
+            catch (NullReferenceException)
             {
                 nullRefExcThrown = true;
             }
@@ -454,7 +454,7 @@ namespace Stateless.Tests
         [Fact]
         public void VerifyNotEnterSuperstateWhenDoingInitialTransition()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
                 .Permit(Trigger.X, State.B);

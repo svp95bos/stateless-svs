@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace TelephoneCallExample
+﻿namespace TelephoneCallExample
 {
     class Program
     {
         static void Main(string[] args)
         {
-            var phoneCall = new PhoneCall("Lokesh");            
+            PhoneCall phoneCall = new("Lokesh");
 
             phoneCall.Print();
             phoneCall.Dialed("Prameela");
@@ -31,6 +29,6 @@ namespace TelephoneCallExample
 
             Console.WriteLine("Press any key...");
             Console.ReadKey(true);
-        }        
+        }
     }
 }

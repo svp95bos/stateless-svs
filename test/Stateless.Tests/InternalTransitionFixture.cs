@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+
 using Xunit;
 
 namespace Stateless.Tests
@@ -14,7 +15,7 @@ namespace Stateless.Tests
         [Fact]
         public void StayInSameStateOneState_Transition()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
             sm.Configure(State.A)
                 .InternalTransition(Trigger.X, t => { });
 
@@ -26,7 +27,7 @@ namespace Stateless.Tests
         [Fact]
         public void StayInSameStateTwoStates_Transition()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
                 .InternalTransition(Trigger.X, t => { })
@@ -52,7 +53,7 @@ namespace Stateless.Tests
         [Fact]
         public void StayInSameSubStateTransitionInSuperstate_Transition()
         {
-            var sm = new StateMachine<State, Trigger>(State.B);
+            StateMachine<State, Trigger> sm = new(State.B);
 
             sm.Configure(State.A)
                     .InternalTransition(Trigger.X, t => { });
@@ -68,7 +69,7 @@ namespace Stateless.Tests
         [Fact]
         public void StayInSameSubStateTransitionInSubstate_Transition()
         {
-            var sm = new StateMachine<State, Trigger>(State.B);
+            StateMachine<State, Trigger> sm = new(State.B);
 
             sm.Configure(State.A);
 
@@ -85,7 +86,7 @@ namespace Stateless.Tests
         [Fact]
         public void StayInSameStateOneState_Action()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
             sm.Configure(State.A)
                 .InternalTransition(Trigger.X, () => { });
 
@@ -97,7 +98,7 @@ namespace Stateless.Tests
         [Fact]
         public void StayInSameStateTwoStates_Action()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
                 .InternalTransition(Trigger.X, () => { })
@@ -123,7 +124,7 @@ namespace Stateless.Tests
         [Fact]
         public void StayInSameSubStateTransitionInSuperstate_Action()
         {
-            var sm = new StateMachine<State, Trigger>(State.B);
+            StateMachine<State, Trigger> sm = new(State.B);
 
             sm.Configure(State.A)
                     .InternalTransition(Trigger.X, () => { })
@@ -142,7 +143,7 @@ namespace Stateless.Tests
         [Fact]
         public void StayInSameSubStateTransitionInSubstate_Action()
         {
-            var sm = new StateMachine<State, Trigger>(State.B);
+            StateMachine<State, Trigger> sm = new(State.B);
 
             sm.Configure(State.A);
 
@@ -162,11 +163,11 @@ namespace Stateless.Tests
         [Fact]
         public void AllowTriggerWithTwoParameters()
         {
-            var sm = new StateMachine<State, Trigger>(State.B);
-            var trigger = sm.SetTriggerParameters<int, string>(Trigger.X);
+            StateMachine<State, Trigger> sm = new(State.B);
+            StateMachine<State, Trigger>.TriggerWithParameters<int, string> trigger = sm.SetTriggerParameters<int, string>(Trigger.X);
             const int intParam = 5;
             const string strParam = "Five";
-            var callbackInvoked = false;
+            bool callbackInvoked = false;
 
             sm.Configure(State.B)
                 .InternalTransition(trigger, (i, s, transition) =>
@@ -183,12 +184,12 @@ namespace Stateless.Tests
         [Fact]
         public void AllowTriggerWithThreeParameters()
         {
-            var sm = new StateMachine<State, Trigger>(State.B);
-            var trigger = sm.SetTriggerParameters<int, string, bool>(Trigger.X);
+            StateMachine<State, Trigger> sm = new(State.B);
+            StateMachine<State, Trigger>.TriggerWithParameters<int, string, bool> trigger = sm.SetTriggerParameters<int, string, bool>(Trigger.X);
             const int intParam = 5;
             const string strParam = "Five";
-            var boolParam = true;
-            var callbackInvoked = false;
+            bool boolParam = true;
+            bool callbackInvoked = false;
 
             sm.Configure(State.B)
                 .InternalTransition(trigger, (i, s, b, transition) =>
@@ -206,8 +207,8 @@ namespace Stateless.Tests
         [Fact]
         public void ConditionalInternalTransition_ShouldBeReflectedInPermittedTriggers()
         {
-            var isPermitted = true;
-            var sm = new StateMachine<State, Trigger>(State.A);
+            bool isPermitted = true;
+            StateMachine<State, Trigger> sm = new(State.A);
             sm.Configure(State.A)
                 .InternalTransitionIf(Trigger.X, u => isPermitted, t => { });
 
@@ -221,7 +222,7 @@ namespace Stateless.Tests
         {
             State handledIn = State.C;
 
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
                 .InternalTransition(Trigger.X, () => handledIn = State.A);
@@ -240,7 +241,7 @@ namespace Stateless.Tests
         {
             State handledIn = State.C;
 
-            var sm = new StateMachine<State, Trigger>(State.B);
+            StateMachine<State, Trigger> sm = new(State.B);
 
             sm.Configure(State.A)
                 .InternalTransition(Trigger.X, () => handledIn = State.A);
@@ -257,9 +258,9 @@ namespace Stateless.Tests
         [Fact]
         public void OnlyOneHandlerExecuted()
         {
-            var handled = 0;
+            int handled = 0;
 
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
                 .InternalTransition(Trigger.X, () => handled++)
@@ -276,12 +277,12 @@ namespace Stateless.Tests
         [Fact]
         public async Task AsyncHandlesNonAsyndActionAsync()
         {
-            var handled = false;
+            bool handled = false;
 
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
-                .InternalTransition(Trigger.Y, () => handled=true);
+                .InternalTransition(Trigger.Y, () => handled = true);
 
             await sm.FireAsync(Trigger.Y);
 

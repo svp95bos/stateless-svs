@@ -12,7 +12,7 @@ namespace Stateless
         /// </summary>
         public Task ActivateAsync()
         {
-            var representativeState = GetRepresentation(State);
+            StateRepresentation representativeState = GetRepresentation(State);
             return representativeState.ActivateAsync();
         }
 
@@ -23,7 +23,7 @@ namespace Stateless
         /// </summary>
         public Task DeactivateAsync()
         {
-            var representativeState = GetRepresentation(State);
+            StateRepresentation representativeState = GetRepresentation(State);
             return representativeState.DeactivateAsync();
         }
 
@@ -54,7 +54,10 @@ namespace Stateless
         /// not allow the trigger to be fired.</exception>
         public Task FireAsync<TArg0>(TriggerWithParameters<TArg0> trigger, TArg0 arg0)
         {
-            if (trigger == null) throw new ArgumentNullException(nameof(trigger));
+            if (trigger == null)
+            {
+                throw new ArgumentNullException(nameof(trigger));
+            }
 
             return InternalFireAsync(trigger.Trigger, arg0);
         }
@@ -74,7 +77,10 @@ namespace Stateless
         /// not allow the trigger to be fired.</exception>
         public Task FireAsync<TArg0, TArg1>(TriggerWithParameters<TArg0, TArg1> trigger, TArg0 arg0, TArg1 arg1)
         {
-            if (trigger == null) throw new ArgumentNullException(nameof(trigger));
+            if (trigger == null)
+            {
+                throw new ArgumentNullException(nameof(trigger));
+            }
 
             return InternalFireAsync(trigger.Trigger, arg0, arg1);
         }
@@ -96,7 +102,10 @@ namespace Stateless
         /// not allow the trigger to be fired.</exception>
         public Task FireAsync<TArg0, TArg1, TArg2>(TriggerWithParameters<TArg0, TArg1, TArg2> trigger, TArg0 arg0, TArg1 arg1, TArg2 arg2)
         {
-            if (trigger == null) throw new ArgumentNullException(nameof(trigger));
+            if (trigger == null)
+            {
+                throw new ArgumentNullException(nameof(trigger));
+            }
 
             return InternalFireAsync(trigger.Trigger, arg0, arg1, arg2);
         }
@@ -144,7 +153,7 @@ namespace Stateless
 
                 while (_eventQueue.Count != 0)
                 {
-                    var queuedEvent = _eventQueue.Dequeue();
+                    QueuedTrigger queuedEvent = _eventQueue.Dequeue();
                     await InternalFireOneAsync(queuedEvent.Trigger, queuedEvent.Args).ConfigureAwait(false);
                 }
             }
@@ -158,10 +167,12 @@ namespace Stateless
         {
             // If this is a trigger with parameters, we must validate the parameter(s)
             if (_triggerConfiguration.TryGetValue(trigger, out TriggerWithParameters configuration))
+            {
                 configuration.ValidateParameters(args);
+            }
 
-            var source = State;
-            var representativeState = GetRepresentation(source);
+            TState source = State;
+            StateRepresentation representativeState = GetRepresentation(source);
 
             // Try to find a trigger handler, either in the current state or a super state.
             if (!representativeState.TryFindHandler(trigger, args, out TriggerBehaviourResult result))
@@ -180,15 +191,15 @@ namespace Stateless
                 case ReentryTriggerBehaviour handler:
                     {
                         // Handle transition, and set new state
-                        var transition = new Transition(source, handler.Destination, trigger, args);
+                        Transition transition = new(source, handler.Destination, trigger, args);
                         await HandleReentryTriggerAsync(args, representativeState, transition);
                         break;
                     }
-                case DynamicTriggerBehaviour _ when (result.Handler.ResultsInTransitionFrom(source, args, out var destination)):
+                case DynamicTriggerBehaviour _ when (result.Handler.ResultsInTransitionFrom(source, args, out TState destination)):
                 case TransitioningTriggerBehaviour _ when (result.Handler.ResultsInTransitionFrom(source, args, out destination)):
                     {
                         // Handle transition, and set new state
-                        var transition = new Transition(source, destination, trigger, args);
+                        Transition transition = new(source, destination, trigger, args);
                         await HandleTransitioningTriggerAsync(args, representativeState, transition);
 
                         break;
@@ -196,12 +207,17 @@ namespace Stateless
                 case InternalTriggerBehaviour itb:
                     {
                         // Internal transitions does not update the current state, but must execute the associated action.
-                        var transition = new Transition(source, source, trigger, args);
+                        Transition transition = new(source, source, trigger, args);
 
                         if (itb is InternalTriggerBehaviour.Async ita)
+                        {
                             await ita.ExecuteAsync(transition, args);
+                        }
                         else
+                        {
                             await Task.Run(() => itb.Execute(transition, args));
+                        }
+
                         break;
                     }
                 default:
@@ -213,7 +229,7 @@ namespace Stateless
         {
             StateRepresentation representation;
             transition = await representativeState.ExitAsync(transition);
-            var newRepresentation = GetRepresentation(transition.Destination);
+            StateRepresentation newRepresentation = GetRepresentation(transition.Destination);
 
             if (!transition.Source.Equals(transition.Destination))
             {
@@ -239,11 +255,11 @@ namespace Stateless
             transition = await representativeState.ExitAsync(transition);
 
             State = transition.Destination;
-            var newRepresentation = GetRepresentation(transition.Destination);
+            StateRepresentation newRepresentation = GetRepresentation(transition.Destination);
 
             //Alert all listeners of state transition
             await _onTransitionedEvent.InvokeAsync(transition);
-            var representation = await EnterStateAsync(newRepresentation, transition, args);
+            StateRepresentation representation = await EnterStateAsync(newRepresentation, transition, args);
 
             // Check if state has changed by entering new state (by fireing triggers in OnEntry or such)
             if (!representation.UnderlyingState.Equals(State))
@@ -279,7 +295,7 @@ namespace Stateless
                     throw new InvalidOperationException($"The target ({representation.InitialTransitionTarget}) for the initial transition is not a substate.");
                 }
 
-                var initialTransition = new InitialTransition(transition.Source, representation.InitialTransitionTarget, transition.Trigger, args);
+                InitialTransition initialTransition = new(transition.Source, representation.InitialTransitionTarget, transition.Trigger, args);
                 representation = GetRepresentation(representation.InitialTransitionTarget);
 
                 // Alert all listeners of initial state transition
@@ -297,7 +313,11 @@ namespace Stateless
         /// <param name="unhandledTriggerAction"></param>
         public void OnUnhandledTriggerAsync(Func<TState, TTrigger, Task> unhandledTriggerAction)
         {
-            if (unhandledTriggerAction == null) throw new ArgumentNullException(nameof(unhandledTriggerAction));
+            if (unhandledTriggerAction == null)
+            {
+                throw new ArgumentNullException(nameof(unhandledTriggerAction));
+            }
+
             _unhandledTriggerAction = new UnhandledTriggerAction.Async((s, t, c) => unhandledTriggerAction(s, t));
         }
 
@@ -308,7 +328,11 @@ namespace Stateless
         /// <param name="unhandledTriggerAction">An asynchronous action to call when an unhandled trigger is fired.</param>
         public void OnUnhandledTriggerAsync(Func<TState, TTrigger, ICollection<string>, Task> unhandledTriggerAction)
         {
-            if (unhandledTriggerAction == null) throw new ArgumentNullException(nameof(unhandledTriggerAction));
+            if (unhandledTriggerAction == null)
+            {
+                throw new ArgumentNullException(nameof(unhandledTriggerAction));
+            }
+
             _unhandledTriggerAction = new UnhandledTriggerAction.Async(unhandledTriggerAction);
         }
 
@@ -320,7 +344,11 @@ namespace Stateless
         /// of the transition.</param>
         public void OnTransitionedAsync(Func<Transition, Task> onTransitionAction)
         {
-            if (onTransitionAction == null) throw new ArgumentNullException(nameof(onTransitionAction));
+            if (onTransitionAction == null)
+            {
+                throw new ArgumentNullException(nameof(onTransitionAction));
+            }
+
             _onTransitionedEvent.Register(onTransitionAction);
         }
 
@@ -333,7 +361,11 @@ namespace Stateless
         /// of the transition.</param>
         public void OnTransitionCompletedAsync(Func<Transition, Task> onTransitionAction)
         {
-            if (onTransitionAction == null) throw new ArgumentNullException(nameof(onTransitionAction));
+            if (onTransitionAction == null)
+            {
+                throw new ArgumentNullException(nameof(onTransitionAction));
+            }
+
             _onTransitionCompletedEvent.Register(onTransitionAction);
         }
     }

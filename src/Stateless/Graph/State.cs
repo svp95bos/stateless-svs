@@ -52,14 +52,18 @@ namespace Stateless.Graph
             StateName = stateInfo.UnderlyingState.ToString();
 
             // Only include entry actions that aren't specific to a trigger
-            foreach (var entryAction in stateInfo.EntryActions)
+            foreach (ActionInfo entryAction in stateInfo.EntryActions)
             {
                 if (entryAction.FromTrigger == null)
+                {
                     EntryActions.Add(entryAction.Method.Description);
+                }
             }
 
-            foreach (var exitAction in stateInfo.ExitActions)
+            foreach (InvocationInfo exitAction in stateInfo.ExitActions)
+            {
                 ExitActions.Add(exitAction.Description);
+            }
         }
 
         /// <summary>

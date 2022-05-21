@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+
 using Xunit;
 
 namespace Stateless.Tests
@@ -8,7 +9,7 @@ namespace Stateless.Tests
         [Fact]
         public void DestinationStateIsDynamic()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
             sm.Configure(State.A)
                 .PermitDynamic(Trigger.X, () => State.B);
 
@@ -20,8 +21,8 @@ namespace Stateless.Tests
         [Fact]
         public void DestinationStateIsCalculatedBasedOnTriggerParameters()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
-            var trigger = sm.SetTriggerParameters<int>(Trigger.X);
+            StateMachine<State, Trigger> sm = new(State.A);
+            StateMachine<State, Trigger>.TriggerWithParameters<int> trigger = sm.SetTriggerParameters<int>(Trigger.X);
             sm.Configure(State.A)
                 .PermitDynamic(trigger, i => i == 1 ? State.B : State.C);
 
@@ -33,10 +34,10 @@ namespace Stateless.Tests
         [Fact]
         public void Sdfsf()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
-            var trigger = sm.SetTriggerParameters<int>(Trigger.X);
+            StateMachine<State, Trigger> sm = new(State.A);
+            StateMachine<State, Trigger>.TriggerWithParameters<int> trigger = sm.SetTriggerParameters<int>(Trigger.X);
             sm.Configure(State.A)
-                .PermitDynamicIf(trigger, (i) => i == 1 ? State.C : State.B, (i) => i == 1 ? true : false);
+                .PermitDynamicIf(trigger, (i) => i == 1 ? State.C : State.B, (i) => i == 1);
 
             // Should not throw
             sm.GetPermittedTriggers().ToList();

@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+
 using Xunit;
 
 namespace Stateless.Tests
@@ -11,13 +12,13 @@ namespace Stateless.Tests
         [Fact]
         public async Task InternalTransitionAsyncIf_GuardExecutedOnlyOnce()
         {
-            var guardCalls = 0;
-            var order = new Order
+            int guardCalls = 0;
+            Order order = new()
             {
                 Status = OrderStatus.OrderPlaced,
                 PaymentStatus = PaymentStatus.Pending,
             };
-            var stateMachine = new StateMachine<OrderStatus, OrderStateTrigger>(order.Status);
+            StateMachine<OrderStatus, OrderStateTrigger> stateMachine = new(order.Status);
             stateMachine.Configure(OrderStatus.OrderPlaced)
                  .InternalTransitionAsyncIf(OrderStateTrigger.PaymentCompleted,
                        () => PreCondition(ref guardCalls),

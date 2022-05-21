@@ -9,10 +9,10 @@ namespace Stateless.Tests
         [Fact]
         public void WhenActivate()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
-            var expectedOrdering = new List<string> { "ActivatedC", "ActivatedA" };
-            var actualOrdering = new List<string>();
+            List<string> expectedOrdering = new() { "ActivatedC", "ActivatedA" };
+            List<string> actualOrdering = new();
 
             sm.Configure(State.A)
               .SubstateOf(State.C)
@@ -29,15 +29,17 @@ namespace Stateless.Tests
 
             Assert.Equal(expectedOrdering.Count, actualOrdering.Count);
             for (int i = 0; i < expectedOrdering.Count; i++)
+            {
                 Assert.Equal(expectedOrdering[i], actualOrdering[i]);
+            }
         }
 
         [Fact]
         public void WhenActivateIsIdempotent()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
-            var actualOrdering = new List<string>();
+            List<string> actualOrdering = new();
 
             sm.Configure(State.A)
               .SubstateOf(State.C)
@@ -54,10 +56,10 @@ namespace Stateless.Tests
         [Fact]
         public void WhenDeactivate()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
-            var expectedOrdering = new List<string> { "DeactivatedA", "DeactivatedC" };
-            var actualOrdering = new List<string>();
+            List<string> expectedOrdering = new() { "DeactivatedA", "DeactivatedC" };
+            List<string> actualOrdering = new();
 
             sm.Configure(State.A)
               .SubstateOf(State.C)
@@ -75,15 +77,17 @@ namespace Stateless.Tests
 
             Assert.Equal(expectedOrdering.Count, actualOrdering.Count);
             for (int i = 0; i < expectedOrdering.Count; i++)
+            {
                 Assert.Equal(expectedOrdering[i], actualOrdering[i]);
+            }
         }
 
         [Fact]
         public void WhenDeactivateIsIdempotent()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
-            var actualOrdering = new List<string>();
+            List<string> actualOrdering = new();
 
             sm.Configure(State.A)
               .SubstateOf(State.C)
@@ -104,9 +108,9 @@ namespace Stateless.Tests
         [Fact]
         public void WhenTransitioning()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
-            var expectedOrdering = new List<string>
+            List<string> expectedOrdering = new()
             {
                 "ActivatedA",
                 "ExitedA",
@@ -121,7 +125,7 @@ namespace Stateless.Tests
 
             };
 
-            var actualOrdering = new List<string>();
+            List<string> actualOrdering = new();
 
             sm.Configure(State.A)
               .OnActivate(() => actualOrdering.Add("ActivatedA"))
@@ -146,21 +150,23 @@ namespace Stateless.Tests
 
             Assert.Equal(expectedOrdering.Count, actualOrdering.Count);
             for (int i = 0; i < expectedOrdering.Count; i++)
+            {
                 Assert.Equal(expectedOrdering[i], actualOrdering[i]);
+            }
         }
 
         [Fact]
         public void WhenTransitioningWithinSameSuperstate()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
-            var expectedOrdering = new List<string>
+            List<string> expectedOrdering = new()
             {
                 "ActivatedC",
                 "ActivatedA",
             };
 
-            var actualOrdering = new List<string>();
+            List<string> actualOrdering = new();
 
             sm.Configure(State.A)
               .SubstateOf(State.C)
@@ -184,7 +190,9 @@ namespace Stateless.Tests
 
             Assert.Equal(expectedOrdering.Count, actualOrdering.Count);
             for (int i = 0; i < expectedOrdering.Count; i++)
+            {
                 Assert.Equal(expectedOrdering[i], actualOrdering[i]);
+            }
         }
     }
 }

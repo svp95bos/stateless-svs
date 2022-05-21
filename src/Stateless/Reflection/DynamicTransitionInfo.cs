@@ -78,7 +78,7 @@
         public static DynamicTransitionInfo Create<TTrigger>(TTrigger trigger, IEnumerable<InvocationInfo> guards,
             InvocationInfo selector, DynamicStateInfos possibleStates)
         {
-            var transition = new DynamicTransitionInfo
+            DynamicTransitionInfo transition = new()
             {
                 Trigger = new TriggerInfo(trigger),
                 GuardConditionsMethodDescriptions = guards ?? new List<InvocationInfo>(),

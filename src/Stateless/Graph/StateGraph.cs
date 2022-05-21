@@ -9,7 +9,7 @@ namespace Stateless.Graph
     /// </summary>
     public class StateGraph
     {
-        private StateInfo initialState;
+        private readonly StateInfo initialState;
 
         /// <summary>
         /// List of all states in the graph, indexed by the string representation of the underlying State object.
@@ -59,21 +59,24 @@ namespace Stateless.Graph
             string dirgraphText = style.GetPrefix().Replace("\n", System.Environment.NewLine);
 
             // Start with the clusters
-            foreach (var state in States.Values.Where(x => x is SuperState))
+            foreach (State state in States.Values.Where(x => x is SuperState))
             {
                 dirgraphText += style.FormatOneCluster((SuperState)state).Replace("\n", System.Environment.NewLine);
             }
 
             // Next process all non-cluster states
-            foreach (var state in States.Values)
+            foreach (State state in States.Values)
             {
                 if ((state is SuperState) || (state is Decision) || (state.SuperState != null))
+                {
                     continue;
+                }
+
                 dirgraphText += style.FormatOneState(state).Replace("\n", System.Environment.NewLine);
             }
 
             // Finally, add decision nodes
-            foreach (var dec in Decisions)
+            foreach (Decision dec in Decisions)
             {
                 dirgraphText += style.FormatOneDecisionNode(dec.NodeName, dec.Method.Description)
                     .Replace("\n", System.Environment.NewLine);
@@ -81,11 +84,13 @@ namespace Stateless.Graph
 
             // now build behaviours
             List<string> transits = style.FormatAllTransitions(Transitions);
-            foreach (var transit in transits)
+            foreach (string transit in transits)
+            {
                 dirgraphText += System.Environment.NewLine + transit;
+            }
 
             // Add initial transition if present
-            var initialStateName = initialState.UnderlyingState.ToString();
+            string initialStateName = initialState.UnderlyingState.ToString();
             dirgraphText += System.Environment.NewLine + $" init [label=\"\", shape=point];";
             dirgraphText += System.Environment.NewLine + $" init -> \"{initialStateName}\"[style = \"solid\"]";
 
@@ -102,16 +107,16 @@ namespace Stateless.Graph
         /// <param name="machineInfo"></param>
         void ProcessOnEntryFrom(StateMachineInfo machineInfo)
         {
-            foreach (var stateInfo in machineInfo.States)
+            foreach (StateInfo stateInfo in machineInfo.States)
             {
                 State state = States[stateInfo.UnderlyingState.ToString()];
-                foreach (var entryAction in stateInfo.EntryActions)
+                foreach (ActionInfo entryAction in stateInfo.EntryActions)
                 {
                     if (entryAction.FromTrigger != null)
                     {
                         // This 'state' has an 'entryAction' that only fires when it gets the trigger 'entryAction.FromTrigger'
                         // Does it have any incoming transitions that specify that trigger?
-                        foreach (var transit in state.Arriving)
+                        foreach (Transition transit in state.Arriving)
                         {
                             if ((transit.ExecuteEntryExitActions)
                                 && (transit.Trigger.UnderlyingTrigger.ToString() == entryAction.FromTrigger))
@@ -131,44 +136,44 @@ namespace Stateless.Graph
         /// <param name="machineInfo"></param>
         void AddTransitions(StateMachineInfo machineInfo)
         {
-            foreach (var stateInfo in machineInfo.States)
+            foreach (StateInfo stateInfo in machineInfo.States)
             {
                 State fromState = States[stateInfo.UnderlyingState.ToString()];
-                foreach (var fix in stateInfo.FixedTransitions)
+                foreach (FixedTransitionInfo fix in stateInfo.FixedTransitions)
                 {
                     State toState = States[fix.DestinationState.UnderlyingState.ToString()];
                     if (fromState == toState)
                     {
-                        StayTransition stay = new StayTransition(fromState, fix.Trigger, fix.GuardConditionsMethodDescriptions, true);
+                        StayTransition stay = new(fromState, fix.Trigger, fix.GuardConditionsMethodDescriptions, true);
                         Transitions.Add(stay);
                         fromState.Leaving.Add(stay);
                         fromState.Arriving.Add(stay);
                     }
                     else
                     {
-                        FixedTransition trans = new FixedTransition(fromState, toState, fix.Trigger, fix.GuardConditionsMethodDescriptions);
+                        FixedTransition trans = new(fromState, toState, fix.Trigger, fix.GuardConditionsMethodDescriptions);
                         Transitions.Add(trans);
                         fromState.Leaving.Add(trans);
                         toState.Arriving.Add(trans);
                     }
                 }
-                foreach (var dyno in stateInfo.DynamicTransitions)
+                foreach (DynamicTransitionInfo dyno in stateInfo.DynamicTransitions)
                 {
-                    Decision decide = new Decision(dyno.DestinationStateSelectorDescription, Decisions.Count + 1);
+                    Decision decide = new(dyno.DestinationStateSelectorDescription, Decisions.Count + 1);
                     Decisions.Add(decide);
-                    FixedTransition trans = new FixedTransition(fromState, decide, dyno.Trigger,
+                    FixedTransition trans = new(fromState, decide, dyno.Trigger,
                         dyno.GuardConditionsMethodDescriptions);
                     Transitions.Add(trans);
                     fromState.Leaving.Add(trans);
                     decide.Arriving.Add(trans);
                     if (dyno.PossibleDestinationStates != null)
                     {
-                        foreach (var dynamicStateInfo in dyno.PossibleDestinationStates)
+                        foreach (DynamicStateInfo dynamicStateInfo in dyno.PossibleDestinationStates)
                         {
                             States.TryGetValue(dynamicStateInfo.DestinationState, out State toState);
                             if (toState != null)
                             {
-                                DynamicTransition dtrans = new DynamicTransition(decide, toState, dyno.Trigger, dynamicStateInfo.Criterion);
+                                DynamicTransition dtrans = new(decide, toState, dyno.Trigger, dynamicStateInfo.Criterion);
                                 Transitions.Add(dtrans);
                                 decide.Leaving.Add(dtrans);
                                 toState.Arriving.Add(dtrans);
@@ -176,9 +181,9 @@ namespace Stateless.Graph
                         }
                     }
                 }
-                foreach (var igno in stateInfo.IgnoredTriggers)
+                foreach (IgnoredTransitionInfo igno in stateInfo.IgnoredTriggers)
                 {
-                    StayTransition stay = new StayTransition(fromState, igno.Trigger, igno.GuardConditionsMethodDescriptions, false);
+                    StayTransition stay = new(fromState, igno.Trigger, igno.GuardConditionsMethodDescriptions, false);
                     Transitions.Add(stay);
                     fromState.Leaving.Add(stay);
                     fromState.Arriving.Add(stay);
@@ -193,10 +198,12 @@ namespace Stateless.Graph
         /// <param name="machineInfo"></param>
         void AddSingleStates(StateMachineInfo machineInfo)
         {
-            foreach (var stateInfo in machineInfo.States)
+            foreach (StateInfo stateInfo in machineInfo.States)
             {
                 if (!States.ContainsKey(stateInfo.UnderlyingState.ToString()))
+                {
                     States[stateInfo.UnderlyingState.ToString()] = new State(stateInfo);
+                }
             }
         }
 
@@ -206,9 +213,9 @@ namespace Stateless.Graph
         /// <param name="machineInfo"></param>
         void AddSuperstates(StateMachineInfo machineInfo)
         {
-            foreach (var stateInfo in machineInfo.States.Where(sc => (sc.Substates?.Count() > 0) && (sc.Superstate == null)))
+            foreach (StateInfo stateInfo in machineInfo.States.Where(sc => (sc.Substates?.Count() > 0) && (sc.Superstate == null)))
             {
-                SuperState state = new SuperState(stateInfo);
+                SuperState state = new(stateInfo);
                 States[stateInfo.UnderlyingState.ToString()] = state;
                 AddSubstates(state, stateInfo.Substates);
             }
@@ -216,7 +223,7 @@ namespace Stateless.Graph
 
         void AddSubstates(SuperState superState, IEnumerable<StateInfo> substates)
         {
-            foreach (var subState in substates)
+            foreach (StateInfo subState in substates)
             {
                 if (States.ContainsKey(subState.UnderlyingState.ToString()))
                 {
@@ -224,7 +231,7 @@ namespace Stateless.Graph
                 }
                 else if (subState.Substates.Any())
                 {
-                    SuperState sub = new SuperState(subState);
+                    SuperState sub = new(subState);
                     States[subState.UnderlyingState.ToString()] = sub;
                     superState.SubStates.Add(sub);
                     sub.SuperState = superState;
@@ -232,7 +239,7 @@ namespace Stateless.Graph
                 }
                 else
                 {
-                    State sub = new State(subState);
+                    State sub = new(subState);
                     States[subState.UnderlyingState.ToString()] = sub;
                     superState.SubStates.Add(sub);
                     sub.SuperState = superState;

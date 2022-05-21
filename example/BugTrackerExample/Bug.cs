@@ -1,5 +1,4 @@
-﻿using System;
-using Stateless;
+﻿using Stateless;
 using Stateless.Graph;
 
 namespace BugTrackerExample
@@ -75,7 +74,9 @@ namespace BugTrackerExample
         private void OnAssigned(string assignee)
         {
             if (_assignee != null && assignee != _assignee)
+            {
                 SendEmailToAssignee("Don't forget to help the new employee!");
+            }
 
             _assignee = assignee;
             SendEmailToAssignee("You own it.");

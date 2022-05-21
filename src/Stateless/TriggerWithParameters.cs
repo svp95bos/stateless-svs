@@ -24,7 +24,7 @@
             /// <summary>
             /// Gets the underlying trigger value that has been configured.
             /// </summary>
-            public TTrigger Trigger { get { return _underlyingTrigger; } }
+            public TTrigger Trigger => _underlyingTrigger;
 
             /// <summary>
             /// Ensure that the supplied arguments are compatible with those configured for this
@@ -33,7 +33,10 @@
             /// <param name="args"></param>
             public void ValidateParameters(object[] args)
             {
-                if (args == null) throw new ArgumentNullException(nameof(args));
+                if (args == null)
+                {
+                    throw new ArgumentNullException(nameof(args));
+                }
 
                 ParameterConversion.Validate(args, _argumentTypes);
             }

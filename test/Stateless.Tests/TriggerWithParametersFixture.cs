@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Xunit;
 
 namespace Stateless.Tests
@@ -8,42 +9,42 @@ namespace Stateless.Tests
         [Fact]
         public void DescribesUnderlyingTrigger()
         {
-            var twp = new StateMachine<State, Trigger>.TriggerWithParameters<string>(Trigger.X);
+            StateMachine<State, Trigger>.TriggerWithParameters<string> twp = new(Trigger.X);
             Assert.Equal(Trigger.X, twp.Trigger);
         }
 
         [Fact]
         public void ParametersOfCorrectTypeAreAccepted()
         {
-            var twp = new StateMachine<State, Trigger>.TriggerWithParameters<string>(Trigger.X);
+            StateMachine<State, Trigger>.TriggerWithParameters<string> twp = new(Trigger.X);
             twp.ValidateParameters(new[] { "arg" });
         }
 
         [Fact]
         public void ParametersArePolymorphic()
         {
-            var twp = new StateMachine<State, Trigger>.TriggerWithParameters<object>(Trigger.X);
+            StateMachine<State, Trigger>.TriggerWithParameters<object> twp = new(Trigger.X);
             twp.ValidateParameters(new[] { "arg" });
         }
 
         [Fact]
         public void IncompatibleParametersAreNotValid()
         {
-            var twp = new StateMachine<State, Trigger>.TriggerWithParameters<string>(Trigger.X);
+            StateMachine<State, Trigger>.TriggerWithParameters<string> twp = new(Trigger.X);
             Assert.Throws<ArgumentException>(() => twp.ValidateParameters(new object[] { 123 }));
         }
 
         [Fact]
         public void TooFewParametersDetected()
         {
-            var twp = new StateMachine<State, Trigger>.TriggerWithParameters<string, string>(Trigger.X);
+            StateMachine<State, Trigger>.TriggerWithParameters<string, string> twp = new(Trigger.X);
             Assert.Throws<ArgumentException>(() => twp.ValidateParameters(new[] { "a" }));
         }
 
         [Fact]
         public void TooManyParametersDetected()
         {
-            var twp = new StateMachine<State, Trigger>.TriggerWithParameters<string, string>(Trigger.X);
+            StateMachine<State, Trigger>.TriggerWithParameters<string, string> twp = new(Trigger.X);
             Assert.Throws<ArgumentException>(() => twp.ValidateParameters(new[] { "a", "b", "c" }));
         }
 
@@ -53,7 +54,7 @@ namespace Stateless.Tests
         [Fact]
         public void StateParameterIsNotAmbiguous()
         {
-            var fsm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> fsm = new(State.A);
             StateMachine<State, Trigger>.TriggerWithParameters<State> pressTrigger = fsm.SetTriggerParameters<State>(Trigger.X);
 
             fsm.Configure(State.A)
@@ -63,14 +64,14 @@ namespace Stateless.Tests
         [Fact]
         public void IncompatibleParameterListIsNotValid()
         {
-            var twp = new StateMachine<State, Trigger>.TriggerWithParameters(Trigger.X, new Type[] { typeof(int), typeof(string) });
+            StateMachine<State, Trigger>.TriggerWithParameters twp = new(Trigger.X, new Type[] { typeof(int), typeof(string) });
             Assert.Throws<ArgumentException>(() => twp.ValidateParameters(new object[] { 123 }));
         }
 
         [Fact]
         public void ParameterListOfCorrectTypeAreAccepted()
         {
-            var twp = new StateMachine<State, Trigger>.TriggerWithParameters(Trigger.X, new Type[] { typeof(int), typeof(string) });
+            StateMachine<State, Trigger>.TriggerWithParameters twp = new(Trigger.X, new Type[] { typeof(int), typeof(string) });
             twp.ValidateParameters(new object[] { 123, "arg" });
         }
     }

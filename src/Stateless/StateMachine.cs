@@ -35,7 +35,7 @@ namespace Stateless
             public object[] Args { get; set; }
         }
 
-        private readonly Queue<QueuedTrigger> _eventQueue = new Queue<QueuedTrigger>();
+        private readonly Queue<QueuedTrigger> _eventQueue = new();
         private bool _firing;
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Stateless
         /// <param name="firingMode">Optional specification of fireing mode.</param>
         public StateMachine(TState initialState, FiringMode firingMode) : this()
         {
-            var reference = new StateReference { State = initialState };
+            StateReference reference = new() { State = initialState };
             _stateAccessor = () => reference.State;
             _stateMutator = s => reference.State = s;
 
@@ -99,26 +99,14 @@ namespace Stateless
         /// </summary>
         public TState State
         {
-            get
-            {
-                return _stateAccessor();
-            }
-            private set
-            {
-                _stateMutator(value);
-            }
+            get => _stateAccessor();
+            private set => _stateMutator(value);
         }
 
         /// <summary>
         /// The currently-permissible trigger values.
         /// </summary>
-        public IEnumerable<TTrigger> PermittedTriggers
-        {
-            get
-            {
-                return GetPermittedTriggers();
-            }
-        }
+        public IEnumerable<TTrigger> PermittedTriggers => GetPermittedTriggers();
 
         /// <summary>
         /// The currently-permissible trigger values.
@@ -128,39 +116,37 @@ namespace Stateless
             return CurrentRepresentation.GetPermittedTriggers(args);
         }
 
-        StateRepresentation CurrentRepresentation
-        {
-            get
-            {
-                return GetRepresentation(State);
-            }
-        }
+        StateRepresentation CurrentRepresentation => GetRepresentation(State);
 
         /// <summary>
         /// Provides an info object which exposes the states, transitions, and actions of this machine.
         /// </summary>
         public StateMachineInfo GetInfo()
         {
-            var initialState = StateInfo.CreateStateInfo(new StateRepresentation(State));
+            StateInfo initialState = StateInfo.CreateStateInfo(new StateRepresentation(State));
 
-            var representations = _stateConfiguration.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            Dictionary<TState, StateRepresentation> representations = _stateConfiguration.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-            var behaviours = _stateConfiguration.SelectMany(kvp => kvp.Value.TriggerBehaviours.SelectMany(b => b.Value.OfType<TransitioningTriggerBehaviour>().Select(tb => tb.Destination))).ToList();
+            List<TState> behaviours = _stateConfiguration.SelectMany(kvp => kvp.Value.TriggerBehaviours.SelectMany(b => b.Value.OfType<TransitioningTriggerBehaviour>().Select(tb => tb.Destination))).ToList();
             behaviours.AddRange(_stateConfiguration.SelectMany(kvp => kvp.Value.TriggerBehaviours.SelectMany(b => b.Value.OfType<ReentryTriggerBehaviour>().Select(tb => tb.Destination))).ToList());
 
-            var reachable = behaviours
+            StateRepresentation[] reachable = behaviours
                 .Distinct()
                 .Except(representations.Keys)
                 .Select(underlying => new StateRepresentation(underlying))
                 .ToArray();
 
-            foreach (var representation in reachable)
+            foreach (StateRepresentation representation in reachable)
+            {
                 representations.Add(representation.UnderlyingState, representation);
+            }
 
-            var info = representations.ToDictionary(kvp => kvp.Key, kvp => StateInfo.CreateStateInfo(kvp.Value));
+            Dictionary<TState, StateInfo> info = representations.ToDictionary(kvp => kvp.Key, kvp => StateInfo.CreateStateInfo(kvp.Value));
 
-            foreach (var state in info)
+            foreach (KeyValuePair<TState, StateInfo> state in info)
+            {
                 StateInfo.AddRelationships(state.Value, representations[state.Key], k => info[k]);
+            }
 
             return new StateMachineInfo(info.Values, typeof(TState), typeof(TTrigger), initialState);
         }
@@ -213,7 +199,11 @@ namespace Stateless
         /// not allow the trigger to be fired.</exception>
         public void Fire(TriggerWithParameters trigger, params object[] args)
         {
-            if (trigger == null) throw new ArgumentNullException(nameof(trigger));
+            if (trigger == null)
+            {
+                throw new ArgumentNullException(nameof(trigger));
+            }
+
             InternalFire(trigger.Trigger, args);
         }
 
@@ -226,7 +216,7 @@ namespace Stateless
         /// fire the parameterised trigger.</returns>
         public TriggerWithParameters SetTriggerParameters(TTrigger trigger, params Type[] argumentTypes)
         {
-            var configuration = new TriggerWithParameters(trigger, argumentTypes);
+            TriggerWithParameters configuration = new(trigger, argumentTypes);
             SaveTriggerConfiguration(configuration);
             return configuration;
         }
@@ -244,7 +234,11 @@ namespace Stateless
         /// not allow the trigger to be fired.</exception>
         public void Fire<TArg0>(TriggerWithParameters<TArg0> trigger, TArg0 arg0)
         {
-            if (trigger == null) throw new ArgumentNullException(nameof(trigger));
+            if (trigger == null)
+            {
+                throw new ArgumentNullException(nameof(trigger));
+            }
+
             InternalFire(trigger.Trigger, arg0);
         }
 
@@ -263,7 +257,11 @@ namespace Stateless
         /// not allow the trigger to be fired.</exception>
         public void Fire<TArg0, TArg1>(TriggerWithParameters<TArg0, TArg1> trigger, TArg0 arg0, TArg1 arg1)
         {
-            if (trigger == null) throw new ArgumentNullException(nameof(trigger));
+            if (trigger == null)
+            {
+                throw new ArgumentNullException(nameof(trigger));
+            }
+
             InternalFire(trigger.Trigger, arg0, arg1);
         }
 
@@ -284,7 +282,11 @@ namespace Stateless
         /// not allow the trigger to be fired.</exception>
         public void Fire<TArg0, TArg1, TArg2>(TriggerWithParameters<TArg0, TArg1, TArg2> trigger, TArg0 arg0, TArg1 arg1, TArg2 arg2)
         {
-            if (trigger == null) throw new ArgumentNullException(nameof(trigger));
+            if (trigger == null)
+            {
+                throw new ArgumentNullException(nameof(trigger));
+            }
+
             InternalFire(trigger.Trigger, arg0, arg1, arg2);
         }
 
@@ -295,7 +297,7 @@ namespace Stateless
         /// </summary>
         public void Activate()
         {
-            var representativeState = GetRepresentation(State);
+            StateRepresentation representativeState = GetRepresentation(State);
             representativeState.Activate();
         }
 
@@ -306,7 +308,7 @@ namespace Stateless
         /// </summary>
         public void Deactivate()
         {
-            var representativeState = GetRepresentation(State);
+            StateRepresentation representativeState = GetRepresentation(State);
             representativeState.Deactivate();
         }
 
@@ -355,7 +357,7 @@ namespace Stateless
                 // Empty queue for triggers
                 while (_eventQueue.Any())
                 {
-                    var queuedEvent = _eventQueue.Dequeue();
+                    QueuedTrigger queuedEvent = _eventQueue.Dequeue();
                     InternalFireOne(queuedEvent.Trigger, queuedEvent.Args);
                 }
             }
@@ -375,10 +377,12 @@ namespace Stateless
         {
             // If this is a trigger with parameters, we must validate the parameter(s)
             if (_triggerConfiguration.TryGetValue(trigger, out TriggerWithParameters configuration))
+            {
                 configuration.ValidateParameters(args);
+            }
 
-            var source = State;
-            var representativeState = GetRepresentation(source);
+            TState source = State;
+            StateRepresentation representativeState = GetRepresentation(source);
 
             // Try to find a trigger handler, either in the current state or a super state.
             if (!representativeState.TryFindHandler(trigger, args, out TriggerBehaviourResult result))
@@ -397,15 +401,15 @@ namespace Stateless
                 case ReentryTriggerBehaviour handler:
                     {
                         // Handle transition, and set new state
-                        var transition = new Transition(source, handler.Destination, trigger, args);
+                        Transition transition = new(source, handler.Destination, trigger, args);
                         HandleReentryTrigger(args, representativeState, transition);
                         break;
                     }
-                case DynamicTriggerBehaviour _ when (result.Handler.ResultsInTransitionFrom(source, args, out var destination)):
+                case DynamicTriggerBehaviour _ when (result.Handler.ResultsInTransitionFrom(source, args, out TState destination)):
                 case TransitioningTriggerBehaviour _ when (result.Handler.ResultsInTransitionFrom(source, args, out destination)):
                     {
                         // Handle transition, and set new state
-                        var transition = new Transition(source, destination, trigger, args);
+                        Transition transition = new(source, destination, trigger, args);
                         HandleTransitioningTrigger(args, representativeState, transition);
 
                         break;
@@ -413,7 +417,7 @@ namespace Stateless
                 case InternalTriggerBehaviour _:
                     {
                         // Internal transitions does not update the current state, but must execute the associated action.
-                        var transition = new Transition(source, source, trigger, args);
+                        Transition transition = new(source, source, trigger, args);
                         CurrentRepresentation.InternalAction(transition, args);
                         break;
                     }
@@ -426,7 +430,7 @@ namespace Stateless
         {
             StateRepresentation representation;
             transition = representativeState.Exit(transition);
-            var newRepresentation = GetRepresentation(transition.Destination);
+            StateRepresentation newRepresentation = GetRepresentation(transition.Destination);
 
             if (!transition.Source.Equals(transition.Destination))
             {
@@ -453,11 +457,11 @@ namespace Stateless
             transition = representativeState.Exit(transition);
 
             State = transition.Destination;
-            var newRepresentation = GetRepresentation(transition.Destination);
+            StateRepresentation newRepresentation = GetRepresentation(transition.Destination);
 
             //Alert all listeners of state transition
             _onTransitionedEvent.Invoke(transition);
-            var representation = EnterState(newRepresentation, transition, args);
+            StateRepresentation representation = EnterState(newRepresentation, transition, args);
 
             // Check if state has changed by entering new state (by fireing triggers in OnEntry or such)
             if (!representation.UnderlyingState.Equals(State))
@@ -492,7 +496,7 @@ namespace Stateless
                     throw new InvalidOperationException($"The target ({representation.InitialTransitionTarget}) for the initial transition is not a substate.");
                 }
 
-                var initialTransition = new InitialTransition(transition.Source, representation.InitialTransitionTarget, transition.Trigger, args);
+                InitialTransition initialTransition = new(transition.Source, representation.InitialTransitionTarget, transition.Trigger, args);
                 representation = GetRepresentation(representation.InitialTransitionTarget);
 
                 // Alert all listeners of initial state transition
@@ -510,7 +514,11 @@ namespace Stateless
         /// <param name="unhandledTriggerAction">An action to call when an unhandled trigger is fired.</param>
         public void OnUnhandledTrigger(Action<TState, TTrigger> unhandledTriggerAction)
         {
-            if (unhandledTriggerAction == null) throw new ArgumentNullException(nameof(unhandledTriggerAction));
+            if (unhandledTriggerAction == null)
+            {
+                throw new ArgumentNullException(nameof(unhandledTriggerAction));
+            }
+
             _unhandledTriggerAction = new UnhandledTriggerAction.Sync((s, t, c) => unhandledTriggerAction(s, t));
         }
 
@@ -521,7 +529,11 @@ namespace Stateless
         /// <param name="unhandledTriggerAction">An action to call when an unhandled trigger is fired.</param>
         public void OnUnhandledTrigger(Action<TState, TTrigger, ICollection<string>> unhandledTriggerAction)
         {
-            if (unhandledTriggerAction == null) throw new ArgumentNullException(nameof(unhandledTriggerAction));
+            if (unhandledTriggerAction == null)
+            {
+                throw new ArgumentNullException(nameof(unhandledTriggerAction));
+            }
+
             _unhandledTriggerAction = new UnhandledTriggerAction.Sync(unhandledTriggerAction);
         }
 
@@ -580,7 +592,7 @@ namespace Stateless
         /// fire the parameterised trigger.</returns>
         public TriggerWithParameters<TArg0> SetTriggerParameters<TArg0>(TTrigger trigger)
         {
-            var configuration = new TriggerWithParameters<TArg0>(trigger);
+            TriggerWithParameters<TArg0> configuration = new(trigger);
             SaveTriggerConfiguration(configuration);
             return configuration;
         }
@@ -595,7 +607,7 @@ namespace Stateless
         /// fire the parameterised trigger.</returns>
         public TriggerWithParameters<TArg0, TArg1> SetTriggerParameters<TArg0, TArg1>(TTrigger trigger)
         {
-            var configuration = new TriggerWithParameters<TArg0, TArg1>(trigger);
+            TriggerWithParameters<TArg0, TArg1> configuration = new(trigger);
             SaveTriggerConfiguration(configuration);
             return configuration;
         }
@@ -611,7 +623,7 @@ namespace Stateless
         /// fire the parameterised trigger.</returns>
         public TriggerWithParameters<TArg0, TArg1, TArg2> SetTriggerParameters<TArg0, TArg1, TArg2>(TTrigger trigger)
         {
-            var configuration = new TriggerWithParameters<TArg0, TArg1, TArg2>(trigger);
+            TriggerWithParameters<TArg0, TArg1, TArg2> configuration = new(trigger);
             SaveTriggerConfiguration(configuration);
             return configuration;
         }
@@ -619,8 +631,10 @@ namespace Stateless
         void SaveTriggerConfiguration(TriggerWithParameters trigger)
         {
             if (_triggerConfiguration.ContainsKey(trigger.Trigger))
+            {
                 throw new InvalidOperationException(
                     string.Format(StateMachineResources.CannotReconfigureParameters, trigger));
+            }
 
             _triggerConfiguration.Add(trigger.Trigger, trigger);
         }
@@ -628,10 +642,12 @@ namespace Stateless
         void DefaultUnhandledTriggerAction(TState state, TTrigger trigger, ICollection<string> unmetGuardConditions)
         {
             if (unmetGuardConditions?.Any() ?? false)
+            {
                 throw new InvalidOperationException(
                     string.Format(
                         StateMachineResources.NoTransitionsUnmetGuardConditions,
                         trigger, state, string.Join(", ", unmetGuardConditions)));
+            }
 
             throw new InvalidOperationException(
                 string.Format(
@@ -647,7 +663,11 @@ namespace Stateless
         /// of the transition.</param>
         public void OnTransitioned(Action<Transition> onTransitionAction)
         {
-            if (onTransitionAction == null) throw new ArgumentNullException(nameof(onTransitionAction));
+            if (onTransitionAction == null)
+            {
+                throw new ArgumentNullException(nameof(onTransitionAction));
+            }
+
             _onTransitionedEvent.Register(onTransitionAction);
         }
 
@@ -660,7 +680,11 @@ namespace Stateless
         /// of the transition.</param>
         public void OnTransitionCompleted(Action<Transition> onTransitionAction)
         {
-            if (onTransitionAction == null) throw new ArgumentNullException(nameof(onTransitionAction));
+            if (onTransitionAction == null)
+            {
+                throw new ArgumentNullException(nameof(onTransitionAction));
+            }
+
             _onTransitionCompletedEvent.Register(onTransitionAction);
         }
     }

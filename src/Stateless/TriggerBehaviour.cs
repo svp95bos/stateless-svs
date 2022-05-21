@@ -37,13 +37,19 @@
             /// GuardConditionsMet is true if all of the guard functions return true
             /// or if there are no guard functions
             /// </summary>
-            public bool GuardConditionsMet(params object[] args) => _guard.GuardConditionsMet(args);
+            public bool GuardConditionsMet(params object[] args)
+            {
+                return _guard.GuardConditionsMet(args);
+            }
 
             /// <summary>
             /// UnmetGuardConditions is a list of the descriptions of all guard conditions
             /// whose guard function returns false
             /// </summary>
-            public ICollection<string> UnmetGuardConditions(object[] args) => _guard.UnmetGuardConditions(args);
+            public ICollection<string> UnmetGuardConditions(object[] args)
+            {
+                return _guard.UnmetGuardConditions(args);
+            }
 
             public abstract bool ResultsInTransitionFrom(TState source, object[] args, out TState destination);
         }

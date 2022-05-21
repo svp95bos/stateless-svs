@@ -20,9 +20,13 @@
             StateMachine<TState, TTrigger>.EntryActionBehavior.SyncFrom<TTrigger> syncFrom = entryAction as StateMachine<TState, TTrigger>.EntryActionBehavior.SyncFrom<TTrigger>;
 
             if (syncFrom != null)
+            {
                 return new ActionInfo(entryAction.Description, syncFrom.Trigger.ToString());
+            }
             else
+            {
                 return new ActionInfo(entryAction.Description, null);
+            }
         }
 
         /// <summary>

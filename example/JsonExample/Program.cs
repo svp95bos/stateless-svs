@@ -1,13 +1,11 @@
-﻿using System;
-
-namespace JsonExample
+﻿namespace JsonExample
 {
     internal static class Program
     {
         private static void Main()
         {
             Console.WriteLine("Creating member from JSON");
-            var aMember = Member.FromJson("{ \"State\":\"1\",\"Name\":\"Jay\"}");
+            Member aMember = Member.FromJson("{ \"State\":\"1\",\"Name\":\"Jay\"}");
 
             Console.WriteLine($"Member {aMember.Name} created, membership state is {aMember.State}");
 
@@ -17,10 +15,10 @@ namespace JsonExample
 
             Console.WriteLine("Member JSON:");
 
-            var jsonString = aMember.ToJson();
+            string jsonString = aMember.ToJson();
             Console.WriteLine(jsonString);
 
-            var anotherMember = Member.FromJson(jsonString);
+            Member anotherMember = Member.FromJson(jsonString);
 
             if (aMember.Equals(anotherMember))
             {

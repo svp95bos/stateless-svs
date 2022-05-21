@@ -7,7 +7,7 @@
     {
         internal static FixedTransitionInfo Create<TState, TTrigger>(StateMachine<TState, TTrigger>.TriggerBehaviour behaviour, StateInfo destinationStateInfo)
         {
-            var transition = new FixedTransitionInfo
+            FixedTransitionInfo transition = new()
             {
                 Trigger = new TriggerInfo(behaviour.Trigger),
                 DestinationState = destinationStateInfo,

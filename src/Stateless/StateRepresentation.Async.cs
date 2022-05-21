@@ -19,13 +19,18 @@ namespace Stateless
 
             public void AddEntryAction(TTrigger trigger, Func<Transition, object[], Task> action, Reflection.InvocationInfo entryActionDescription)
             {
-                if (action == null) throw new ArgumentNullException(nameof(action));
+                if (action == null)
+                {
+                    throw new ArgumentNullException(nameof(action));
+                }
 
                 EntryActions.Add(
                     new EntryActionBehavior.Async((t, args) =>
                     {
                         if (t.Trigger.Equals(trigger))
+                        {
                             return action(t, args);
+                        }
 
                         return TaskResult.Done;
                     },
@@ -48,7 +53,9 @@ namespace Stateless
             public async Task ActivateAsync()
             {
                 if (_superstate != null)
+                {
                     await _superstate.ActivateAsync().ConfigureAwait(false);
+                }
 
                 await ExecuteActivationActionsAsync().ConfigureAwait(false);
             }
@@ -58,19 +65,25 @@ namespace Stateless
                 await ExecuteDeactivationActionsAsync().ConfigureAwait(false);
 
                 if (_superstate != null)
+                {
                     await _superstate.DeactivateAsync().ConfigureAwait(false);
+                }
             }
 
             async Task ExecuteActivationActionsAsync()
             {
-                foreach (var action in ActivateActions)
+                foreach (ActivateActionBehaviour action in ActivateActions)
+                {
                     await action.ExecuteAsync().ConfigureAwait(false);
+                }
             }
 
             async Task ExecuteDeactivationActionsAsync()
             {
-                foreach (var action in DeactivateActions)
+                foreach (DeactivateActionBehaviour action in DeactivateActions)
+                {
                     await action.ExecuteAsync().ConfigureAwait(false);
+                }
             }
 
 
@@ -83,7 +96,9 @@ namespace Stateless
                 else if (!Includes(transition.Source))
                 {
                     if (_superstate != null && !(transition is InitialTransition))
+                    {
                         await _superstate.EnterAsync(transition, entryArgs).ConfigureAwait(false);
+                    }
 
                     await ExecuteEntryActionsAsync(transition, entryArgs).ConfigureAwait(false);
                 }
@@ -123,14 +138,18 @@ namespace Stateless
 
             async Task ExecuteEntryActionsAsync(Transition transition, object[] entryArgs)
             {
-                foreach (var action in EntryActions)
+                foreach (EntryActionBehavior action in EntryActions)
+                {
                     await action.ExecuteAsync(transition, entryArgs).ConfigureAwait(false);
+                }
             }
 
             async Task ExecuteExitActionsAsync(Transition transition)
             {
-                foreach (var action in ExitActions)
+                foreach (ExitActionBehavior action in ExitActions)
+                {
                     await action.ExecuteAsync(transition).ConfigureAwait(false);
+                }
             }
         }
     }

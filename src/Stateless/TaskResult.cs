@@ -6,7 +6,7 @@
 
         static Task<T> FromResult<T>(T value)
         {
-            var tcs = new TaskCompletionSource<T>();
+            TaskCompletionSource<T> tcs = new();
             tcs.SetResult(value);
             return tcs.Task;
         }

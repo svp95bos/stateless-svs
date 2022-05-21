@@ -4,7 +4,7 @@
     {
         internal class GuardCondition
         {
-            Reflection.InvocationInfo _methodDescription;
+            readonly Reflection.InvocationInfo _methodDescription;
 
             /// <summary>
             /// Constructor that takes in a guard with no argument.

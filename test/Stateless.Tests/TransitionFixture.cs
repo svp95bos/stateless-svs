@@ -7,14 +7,14 @@ namespace Stateless.Tests
         [Fact]
         public void IdentityTransitionIsNotChange()
         {
-            StateMachine<int, int>.Transition t = new StateMachine<int, int>.Transition(1, 1, 0);
+            StateMachine<int, int>.Transition t = new(1, 1, 0);
             Assert.True(t.IsReentry);
         }
 
         [Fact]
         public void TransitioningTransitionIsChange()
         {
-            StateMachine<int, int>.Transition t = new StateMachine<int, int>.Transition(1, 2, 0);
+            StateMachine<int, int>.Transition t = new(1, 2, 0);
             Assert.False(t.IsReentry);
         }
 
@@ -22,7 +22,7 @@ namespace Stateless.Tests
         public void TestInternalIf()
         {
             // Verifies that only one internal action is executed
-            var machine = new StateMachine<int, int>(1);
+            StateMachine<int, int> machine = new(1);
 
             machine.Configure(1)
                 .InternalTransitionIf(

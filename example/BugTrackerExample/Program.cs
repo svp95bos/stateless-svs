@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace BugTrackerExample
+﻿namespace BugTrackerExample
 {
     class Program
     {
         static void Main(string[] args)
         {
-            var bug = new Bug("Incorrect stock count");
+            Bug bug = new("Incorrect stock count");
 
             bug.Assign("Joe");
             bug.Defer();

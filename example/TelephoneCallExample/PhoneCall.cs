@@ -1,4 +1,3 @@
-using System;
 using Stateless;
 using Stateless.Graph;
 
@@ -29,13 +28,10 @@ namespace TelephoneCallExample
         }
 
         State _state = State.OffHook;
-        
-        StateMachine<State, Trigger> _machine;
-        StateMachine<State, Trigger>.TriggerWithParameters<int> _setVolumeTrigger;
-
-        StateMachine<State, Trigger>.TriggerWithParameters<string> _setCalleeTrigger;
-
-        string _caller;
+        readonly StateMachine<State, Trigger> _machine;
+        readonly StateMachine<State, Trigger>.TriggerWithParameters<int> _setVolumeTrigger;
+        readonly StateMachine<State, Trigger>.TriggerWithParameters<string> _setCalleeTrigger;
+        readonly string _caller;
 
         string _callee;
 
@@ -48,11 +44,11 @@ namespace TelephoneCallExample
             _setCalleeTrigger = _machine.SetTriggerParameters<string>(Trigger.CallDialed);
 
             _machine.Configure(State.OffHook)
-	            .Permit(Trigger.CallDialed, State.Ringing);
+                .Permit(Trigger.CallDialed, State.Ringing);
 
             _machine.Configure(State.Ringing)
                 .OnEntryFrom(_setCalleeTrigger, callee => OnDialed(callee), "Caller number to call")
-	            .Permit(Trigger.CallConnected, State.Connected);
+                .Permit(Trigger.CallConnected, State.Connected);
 
             _machine.Configure(State.Connected)
                 .OnEntry(t => StartCallTimer())
@@ -61,14 +57,14 @@ namespace TelephoneCallExample
                 .InternalTransition(Trigger.UnmuteMicrophone, t => OnUnmute())
                 .InternalTransition<int>(_setVolumeTrigger, (volume, t) => OnSetVolume(volume))
                 .Permit(Trigger.LeftMessage, State.OffHook)
-	            .Permit(Trigger.PlacedOnHold, State.OnHold);
+                .Permit(Trigger.PlacedOnHold, State.OnHold);
 
             _machine.Configure(State.OnHold)
                 .SubstateOf(State.Connected)
                 .Permit(Trigger.TakenOffHold, State.Connected)
                 .Permit(Trigger.PhoneHurledAgainstWall, State.PhoneDestroyed);
 
-            _machine.OnTransitioned(t => Console.WriteLine($"OnTransitioned: {t.Source} -> {t.Destination} via {t.Trigger}({string.Join(", ",  t.Parameters)})"));
+            _machine.OnTransitioned(t => Console.WriteLine($"OnTransitioned: {t.Source} -> {t.Destination} via {t.Trigger}({string.Join(", ", t.Parameters)})"));
         }
 
         void OnSetVolume(int volume)
@@ -123,7 +119,7 @@ namespace TelephoneCallExample
         }
 
         public void Dialed(string callee)
-        {           
+        {
             _machine.Fire(_setCalleeTrigger, callee);
         }
 

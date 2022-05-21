@@ -1,6 +1,7 @@
 ﻿#if TASKS
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using Xunit;
 
 
@@ -17,8 +18,8 @@ namespace Stateless.Tests
         [Fact]
         public void ImmediateEntryAProcessedBeforeEnterB()
         {
-            var record = new List<string>();
-            var sm = new StateMachine<State, Trigger>(State.A, FiringMode.Immediate);
+            List<string> record = new();
+            StateMachine<State, Trigger> sm = new(State.A, FiringMode.Immediate);
 
             sm.Configure(State.A)
                 .OnEntry(() => record.Add("EnterA"))
@@ -51,8 +52,8 @@ namespace Stateless.Tests
         [Fact]
         public void ImmediateEntryAProcessedBeforeEterB()
         {
-            var record = new List<string>();
-            var sm = new StateMachine<State, Trigger>(State.A, FiringMode.Queued);
+            List<string> record = new();
+            StateMachine<State, Trigger> sm = new(State.A, FiringMode.Queued);
 
             sm.Configure(State.A)
                 .OnEntry(() => record.Add("EnterA"))
@@ -84,8 +85,8 @@ namespace Stateless.Tests
         [Fact]
         public void ImmediateFireingOnEntryEndsUpInCorrectState()
         {
-            var record = new List<string>();
-            var sm = new StateMachine<State, Trigger>(State.A, FiringMode.Immediate);
+            List<string> record = new();
+            StateMachine<State, Trigger> sm = new(State.A, FiringMode.Immediate);
 
             sm.Configure(State.A)
                 .OnEntry(() => record.Add("EnterA"))
@@ -124,8 +125,8 @@ namespace Stateless.Tests
         [Fact]
         public async Task ImmediateModeTransitionsAreInCorrectOrderWithAsyncDriving()
         {
-            var record = new List<State>();
-            var sm = new StateMachine<State, Trigger>(State.A, FiringMode.Immediate);
+            List<State> record = new();
+            StateMachine<State, Trigger> sm = new(State.A, FiringMode.Immediate);
 
             sm.OnTransitioned((t) =>
             {
@@ -151,7 +152,7 @@ namespace Stateless.Tests
 
             await sm.FireAsync(Trigger.X);
 
-            Assert.Equal(new List<State>() { 
+            Assert.Equal(new List<State>() {
                 State.B,
                 State.C,
                 State.A
@@ -161,9 +162,9 @@ namespace Stateless.Tests
         [Fact]
         public async void EntersSubStateofSubstateAsyncOnEntryCountAndOrder()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
-            var onEntryCount = "";
+            string onEntryCount = "";
 
             sm.Configure(State.A)
                 .OnEntryAsync(async () =>

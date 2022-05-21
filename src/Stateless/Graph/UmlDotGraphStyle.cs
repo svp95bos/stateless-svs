@@ -26,9 +26,9 @@ namespace Stateless.Graph
         public override string FormatOneCluster(SuperState stateInfo)
         {
             string stateRepresentationString = "";
-            var sourceName = stateInfo.StateName;
+            string sourceName = stateInfo.StateName;
 
-            StringBuilder label = new StringBuilder($"{sourceName}");
+            StringBuilder label = new($"{sourceName}");
 
             if ((stateInfo.EntryActions.Count > 0) || (stateInfo.ExitActions.Count > 0))
             {
@@ -42,7 +42,7 @@ namespace Stateless.Graph
                 + "\t{" + "\n"
                 + $"\tlabel = \"{label.ToString()}\"" + "\n";
 
-            foreach (var subState in stateInfo.SubStates)
+            foreach (State subState in stateInfo.SubStates)
             {
                 stateRepresentationString += FormatOneState(subState);
             }
@@ -60,15 +60,17 @@ namespace Stateless.Graph
         public override string FormatOneState(State state)
         {
             if ((state.EntryActions.Count == 0) && (state.ExitActions.Count == 0))
+            {
                 return $"\"{state.StateName}\" [label=\"{state.StateName}\"];\n";
+            }
 
             string f = $"\"{state.StateName}\" [label=\"{state.StateName}|";
 
-            List<string> es = new List<string>();
+            List<string> es = new();
             es.AddRange(state.EntryActions.Select(act => "entry / " + act));
             es.AddRange(state.ExitActions.Select(act => "exit / " + act));
 
-            f += String.Join("\\n", es);
+            f += string.Join("\\n", es);
 
             f += "\"];\n";
 
@@ -89,14 +91,19 @@ namespace Stateless.Graph
             string label = trigger ?? "";
 
             if (actions?.Count() > 0)
+            {
                 label += " / " + string.Join(", ", actions);
+            }
 
             if (guards.Any())
             {
-                foreach (var info in guards)
+                foreach (string info in guards)
                 {
                     if (label.Length > 0)
+                    {
                         label += " ";
+                    }
+
                     label += "[" + info + "]";
                 }
             }

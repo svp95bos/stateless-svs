@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using Xunit;
 
 namespace Stateless.Tests
@@ -10,7 +11,7 @@ namespace Stateless.Tests
         [Fact]
         public void EntersSubState()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A).Permit(Trigger.X, State.B);
 
@@ -27,7 +28,7 @@ namespace Stateless.Tests
         [Fact]
         public void EntersSubStateofSubstate()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A).Permit(Trigger.X, State.B);
 
@@ -48,7 +49,7 @@ namespace Stateless.Tests
         [Fact]
         public void DoesNotEnterSubStateofSubstate()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A).Permit(Trigger.X, State.B);
 
@@ -68,7 +69,7 @@ namespace Stateless.Tests
         [Fact]
         public async void EntersSubStateAsync()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A).Permit(Trigger.X, State.B);
 
@@ -85,7 +86,7 @@ namespace Stateless.Tests
         [Fact]
         public async void EntersSubStateofSubstateAsync()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A).Permit(Trigger.X, State.B);
 
@@ -106,7 +107,7 @@ namespace Stateless.Tests
         [Fact]
         public async void DoesNotEnterSubStateofSubstateAsync()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A).Permit(Trigger.X, State.B);
 
@@ -126,7 +127,7 @@ namespace Stateless.Tests
         [Fact]
         public void DoNotAllowTransitionToSelf()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             Assert.Throws(typeof(ArgumentException), () =>
                 // This configuration would create an infinite loop
@@ -137,7 +138,7 @@ namespace Stateless.Tests
         [Fact]
         public void DoNotAllowTransitionToAnotherSuperstate()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A).Permit(Trigger.X, State.B);
 
@@ -151,7 +152,7 @@ namespace Stateless.Tests
         [Fact]
         public async void DoNotAllowTransitionToAnotherSuperstateAsync()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A).Permit(Trigger.X, State.B);
 
@@ -165,7 +166,7 @@ namespace Stateless.Tests
         [Fact]
         public void DoNotAllowMoreThanOneInitialTransition()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A).Permit(Trigger.X, State.B);
 
@@ -190,7 +191,7 @@ namespace Stateless.Tests
             //                 
             // X: Exit A => Enter A => Enter B
 
-            var sm = new StateMachine<State, Trigger>(State.A); //never triggers any action!
+            StateMachine<State, Trigger> sm = new(State.A); //never triggers any action!
 
             int order = 0;
 
@@ -222,7 +223,7 @@ namespace Stateless.Tests
         [Fact]
         public void VerifyNotEnterSuperstateWhenDoingInitialTransition()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
                 .Permit(Trigger.X, State.B);
@@ -244,8 +245,8 @@ namespace Stateless.Tests
         [Fact]
         public void SubStateOfSubstateOnEntryCountAndOrder()
         {
-            var sm = new StateMachine<State, Trigger>(State.A);
-            var onEntryCount = "";
+            StateMachine<State, Trigger> sm = new(State.A);
+            string onEntryCount = "";
 
             sm.Configure(State.A)
                 .OnEntry(() => onEntryCount += "A")
@@ -272,10 +273,10 @@ namespace Stateless.Tests
         [Fact]
         public void TransitionEvents_OrderingWithInitialTransition()
         {
-            var expectedOrdering = new List<string> { "OnExitA", "OnTransitionedAB", "OnEntryB", "OnTransitionedBC", "OnEntryC", "OnTransitionCompletedAC" };
-            var actualOrdering = new List<string>();
+            List<string> expectedOrdering = new() { "OnExitA", "OnTransitionedAB", "OnEntryB", "OnTransitionedBC", "OnEntryC", "OnTransitionCompletedAC" };
+            List<string> actualOrdering = new();
 
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
                 .Permit(Trigger.X, State.B)
@@ -305,10 +306,10 @@ namespace Stateless.Tests
         [Fact]
         public async void AsyncTransitionEvents_OrderingWithInitialTransition()
         {
-            var expectedOrdering = new List<string> { "OnExitA", "OnTransitionedAB", "OnEntryB", "OnTransitionedBC", "OnEntryC", "OnTransitionCompletedAC" };
-            var actualOrdering = new List<string>();
+            List<string> expectedOrdering = new() { "OnExitA", "OnTransitionedAB", "OnEntryB", "OnTransitionedBC", "OnEntryC", "OnTransitionCompletedAC" };
+            List<string> actualOrdering = new();
 
-            var sm = new StateMachine<State, Trigger>(State.A);
+            StateMachine<State, Trigger> sm = new(State.A);
 
             sm.Configure(State.A)
                 .Permit(Trigger.X, State.B)
