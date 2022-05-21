@@ -5,204 +5,203 @@ using System.Threading.Tasks;
 using Xunit;
 
 
-namespace Stateless.Tests
+namespace Stateless.Tests;
+
+/// <summary>
+/// This test class verifies that the firing modes are working as expected
+/// </summary>
+public class AsyncFireingModesFixture
 {
     /// <summary>
-    /// This test class verifies that the firing modes are working as expected
+    /// Check that the immediate fireing modes executes entry/exit out of order.
     /// </summary>
-    public class AsyncFireingModesFixture
+    [Fact]
+    public void ImmediateEntryAProcessedBeforeEnterB()
     {
-        /// <summary>
-        /// Check that the immediate fireing modes executes entry/exit out of order.
-        /// </summary>
-        [Fact]
-        public void ImmediateEntryAProcessedBeforeEnterB()
-        {
-            List<string> record = new();
-            StateMachine<State, Trigger> sm = new(State.A, FiringMode.Immediate);
+        List<string> record = new();
+        StateMachine<State, Trigger> sm = new(State.A, FiringMode.Immediate);
 
-            sm.Configure(State.A)
-                .OnEntry(() => record.Add("EnterA"))
-                .Permit(Trigger.X, State.B)
-                .OnExit(() => record.Add("ExitA"));
+        sm.Configure(State.A)
+            .OnEntry(() => record.Add("EnterA"))
+            .Permit(Trigger.X, State.B)
+            .OnExit(() => record.Add("ExitA"));
 
-            sm.Configure(State.B)
-                .OnEntry(() =>
-                {
-                    record.Add("EnterB");
-                    // Fire this before finishing processing the entry action
-                    sm.FireAsync(Trigger.Y);
-                })
-                .Permit(Trigger.Y, State.A)
-                .OnExit(() => record.Add("ExitB"));
-
-            sm.FireAsync(Trigger.X);
-
-            // Expected sequence of events: Exit A -> Exit B -> Enter A -> Enter B
-            Assert.Equal("ExitA", record[0]);
-            Assert.Equal("EnterB", record[1]);
-            Assert.Equal("ExitB", record[2]);
-            Assert.Equal("EnterA", record[3]);
-
-        }
-
-        /// <summary>
-        /// Checks that queued fireing mode executes triggers in order
-        /// </summary>
-        [Fact]
-        public void ImmediateEntryAProcessedBeforeEterB()
-        {
-            List<string> record = new();
-            StateMachine<State, Trigger> sm = new(State.A, FiringMode.Queued);
-
-            sm.Configure(State.A)
-                .OnEntry(() => record.Add("EnterA"))
-                .Permit(Trigger.X, State.B)
-                .OnExit(() => record.Add("ExitA"));
-
-            sm.Configure(State.B)
-                .OnEntry(() =>
-                {
-                    // Fire this before finishing processing the entry action
-                    sm.FireAsync(Trigger.Y);
-                    record.Add("EnterB");
-                })
-                .Permit(Trigger.Y, State.A)
-                .OnExit(() => record.Add("ExitB"));
-
-            sm.FireAsync(Trigger.X);
-
-            // Expected sequence of events: Exit A -> Enter B -> Exit B -> Enter A
-            Assert.Equal("ExitA", record[0]);
-            Assert.Equal("EnterB", record[1]);
-            Assert.Equal("ExitB", record[2]);
-            Assert.Equal("EnterA", record[3]);
-        }
-
-        /// <summary>
-        /// Check that the immediate fireing modes executes entry/exit out of order.
-        /// </summary>
-        [Fact]
-        public void ImmediateFireingOnEntryEndsUpInCorrectState()
-        {
-            List<string> record = new();
-            StateMachine<State, Trigger> sm = new(State.A, FiringMode.Immediate);
-
-            sm.Configure(State.A)
-                .OnEntry(() => record.Add("EnterA"))
-                .Permit(Trigger.X, State.B)
-                .OnExit(() => record.Add("ExitA"));
-
-            sm.Configure(State.B)
-                .OnEntry(() =>
-                {
-                    record.Add("EnterB");
-                    // Fire this before finishing processing the entry action
-                    sm.Fire(Trigger.X);
-                })
-                .Permit(Trigger.X, State.C)
-                .OnExit(() => record.Add("ExitB"));
-
-            sm.Configure(State.C)
-                .OnEntry(() => record.Add("EnterC"))
-                .Permit(Trigger.X, State.A)
-                .OnExit(() => record.Add("ExitC"));
-
-            sm.FireAsync(Trigger.X);
-
-            // Expected sequence of events: Exit A -> Exit B -> Enter A -> Enter B
-            Assert.Equal("ExitA", record[0]);
-            Assert.Equal("EnterB", record[1]);
-            Assert.Equal("ExitB", record[2]);
-            Assert.Equal("EnterC", record[3]);
-
-            Assert.Equal(State.C, sm.State);
-        }
-
-        /// <summary>
-        /// Check that the immediate fireing modes executes entry/exit out of order.
-        /// </summary>
-        [Fact]
-        public async Task ImmediateModeTransitionsAreInCorrectOrderWithAsyncDriving()
-        {
-            List<State> record = new();
-            StateMachine<State, Trigger> sm = new(State.A, FiringMode.Immediate);
-
-            sm.OnTransitioned((t) =>
+        sm.Configure(State.B)
+            .OnEntry(() =>
             {
-                record.Add(t.Destination);
-            });
+                record.Add("EnterB");
+                // Fire this before finishing processing the entry action
+                sm.FireAsync(Trigger.Y);
+            })
+            .Permit(Trigger.Y, State.A)
+            .OnExit(() => record.Add("ExitB"));
 
-            sm.Configure(State.A)
-                .Permit(Trigger.X, State.B);
+        sm.FireAsync(Trigger.X);
 
-            sm.Configure(State.B)
-                .OnEntryAsync(async () =>
-                {
-                    await sm.FireAsync(Trigger.Y).ConfigureAwait(false);
-                })
-                .Permit(Trigger.Y, State.C);
+        // Expected sequence of events: Exit A -> Exit B -> Enter A -> Enter B
+        Assert.Equal("ExitA", record[0]);
+        Assert.Equal("EnterB", record[1]);
+        Assert.Equal("ExitB", record[2]);
+        Assert.Equal("EnterA", record[3]);
 
-            sm.Configure(State.C)
-                .OnEntryAsync(async () =>
-                {
-                    await sm.FireAsync(Trigger.Z).ConfigureAwait(false);
-                })
-                .Permit(Trigger.Z, State.A);
+    }
 
-            await sm.FireAsync(Trigger.X);
+    /// <summary>
+    /// Checks that queued fireing mode executes triggers in order
+    /// </summary>
+    [Fact]
+    public void ImmediateEntryAProcessedBeforeEterB()
+    {
+        List<string> record = new();
+        StateMachine<State, Trigger> sm = new(State.A, FiringMode.Queued);
 
-            Assert.Equal(new List<State>() {
-                State.B,
-                State.C,
-                State.A
-            }, record);
-        }
+        sm.Configure(State.A)
+            .OnEntry(() => record.Add("EnterA"))
+            .Permit(Trigger.X, State.B)
+            .OnExit(() => record.Add("ExitA"));
 
-        [Fact]
-        public async void EntersSubStateofSubstateAsyncOnEntryCountAndOrder()
+        sm.Configure(State.B)
+            .OnEntry(() =>
+            {
+                // Fire this before finishing processing the entry action
+                sm.FireAsync(Trigger.Y);
+                record.Add("EnterB");
+            })
+            .Permit(Trigger.Y, State.A)
+            .OnExit(() => record.Add("ExitB"));
+
+        sm.FireAsync(Trigger.X);
+
+        // Expected sequence of events: Exit A -> Enter B -> Exit B -> Enter A
+        Assert.Equal("ExitA", record[0]);
+        Assert.Equal("EnterB", record[1]);
+        Assert.Equal("ExitB", record[2]);
+        Assert.Equal("EnterA", record[3]);
+    }
+
+    /// <summary>
+    /// Check that the immediate fireing modes executes entry/exit out of order.
+    /// </summary>
+    [Fact]
+    public void ImmediateFireingOnEntryEndsUpInCorrectState()
+    {
+        List<string> record = new();
+        StateMachine<State, Trigger> sm = new(State.A, FiringMode.Immediate);
+
+        sm.Configure(State.A)
+            .OnEntry(() => record.Add("EnterA"))
+            .Permit(Trigger.X, State.B)
+            .OnExit(() => record.Add("ExitA"));
+
+        sm.Configure(State.B)
+            .OnEntry(() =>
+            {
+                record.Add("EnterB");
+                // Fire this before finishing processing the entry action
+                sm.Fire(Trigger.X);
+            })
+            .Permit(Trigger.X, State.C)
+            .OnExit(() => record.Add("ExitB"));
+
+        sm.Configure(State.C)
+            .OnEntry(() => record.Add("EnterC"))
+            .Permit(Trigger.X, State.A)
+            .OnExit(() => record.Add("ExitC"));
+
+        sm.FireAsync(Trigger.X);
+
+        // Expected sequence of events: Exit A -> Exit B -> Enter A -> Enter B
+        Assert.Equal("ExitA", record[0]);
+        Assert.Equal("EnterB", record[1]);
+        Assert.Equal("ExitB", record[2]);
+        Assert.Equal("EnterC", record[3]);
+
+        Assert.Equal(State.C, sm.State);
+    }
+
+    /// <summary>
+    /// Check that the immediate fireing modes executes entry/exit out of order.
+    /// </summary>
+    [Fact]
+    public async Task ImmediateModeTransitionsAreInCorrectOrderWithAsyncDriving()
+    {
+        List<State> record = new();
+        StateMachine<State, Trigger> sm = new(State.A, FiringMode.Immediate);
+
+        sm.OnTransitioned((t) =>
         {
-            StateMachine<State, Trigger> sm = new(State.A);
+            record.Add(t.Destination);
+        });
 
-            string onEntryCount = "";
+        sm.Configure(State.A)
+            .Permit(Trigger.X, State.B);
 
-            sm.Configure(State.A)
-                .OnEntryAsync(async () =>
-                {
-                    onEntryCount += "A";
-                    await Task.Delay(10);
-                })
-                .Permit(Trigger.X, State.B);
+        sm.Configure(State.B)
+            .OnEntryAsync(async () =>
+            {
+                await sm.FireAsync(Trigger.Y).ConfigureAwait(false);
+            })
+            .Permit(Trigger.Y, State.C);
 
-            sm.Configure(State.B)
-                .OnEntryAsync(async () =>
-                {
-                    onEntryCount += "B";
-                    await Task.Delay(10);
-                })
-                .InitialTransition(State.C);
+        sm.Configure(State.C)
+            .OnEntryAsync(async () =>
+            {
+                await sm.FireAsync(Trigger.Z).ConfigureAwait(false);
+            })
+            .Permit(Trigger.Z, State.A);
 
-            sm.Configure(State.C)
-                .OnEntryAsync(async () =>
-                {
-                    onEntryCount += "C";
-                    await Task.Delay(10);
-                })
-                .InitialTransition(State.D)
-                .SubstateOf(State.B);
+        await sm.FireAsync(Trigger.X);
 
-            sm.Configure(State.D)
-                .OnEntryAsync(async () =>
-                {
-                    onEntryCount += "D";
-                    await Task.Delay(10);
-                })
-                .SubstateOf(State.C);
+        Assert.Equal(new List<State>() {
+            State.B,
+            State.C,
+            State.A
+        }, record);
+    }
 
-            await sm.FireAsync(Trigger.X);
+    [Fact]
+    public async void EntersSubStateofSubstateAsyncOnEntryCountAndOrder()
+    {
+        StateMachine<State, Trigger> sm = new(State.A);
 
-            Assert.Equal("BCD", onEntryCount);
-        }
+        string onEntryCount = "";
+
+        sm.Configure(State.A)
+            .OnEntryAsync(async () =>
+            {
+                onEntryCount += "A";
+                await Task.Delay(10);
+            })
+            .Permit(Trigger.X, State.B);
+
+        sm.Configure(State.B)
+            .OnEntryAsync(async () =>
+            {
+                onEntryCount += "B";
+                await Task.Delay(10);
+            })
+            .InitialTransition(State.C);
+
+        sm.Configure(State.C)
+            .OnEntryAsync(async () =>
+            {
+                onEntryCount += "C";
+                await Task.Delay(10);
+            })
+            .InitialTransition(State.D)
+            .SubstateOf(State.B);
+
+        sm.Configure(State.D)
+            .OnEntryAsync(async () =>
+            {
+                onEntryCount += "D";
+                await Task.Delay(10);
+            })
+            .SubstateOf(State.C);
+
+        await sm.FireAsync(Trigger.X);
+
+        Assert.Equal("BCD", onEntryCount);
     }
 }
 #endif

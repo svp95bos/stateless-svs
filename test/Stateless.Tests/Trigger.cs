@@ -1,7 +1,6 @@
-﻿namespace Stateless.Tests
+﻿namespace Stateless.Tests;
+
+enum Trigger
 {
-    enum Trigger
-    {
-        X, Y, Z
-    }
+    X, Y, Z
 }

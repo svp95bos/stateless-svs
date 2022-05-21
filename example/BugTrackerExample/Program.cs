@@ -1,22 +1,21 @@
-﻿namespace BugTrackerExample
+﻿namespace BugTrackerExample;
+
+class Program
 {
-    class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            Bug bug = new("Incorrect stock count");
+        Bug bug = new("Incorrect stock count");
 
-            bug.Assign("Joe");
-            bug.Defer();
-            bug.Assign("Harry");
-            bug.Assign("Fred");
-            bug.Close();
+        bug.Assign("Joe");
+        bug.Defer();
+        bug.Assign("Harry");
+        bug.Assign("Fred");
+        bug.Close();
 
-            Console.WriteLine();
-            Console.WriteLine("State machine:");
-            Console.WriteLine(bug.ToDotGraph());
+        Console.WriteLine();
+        Console.WriteLine("State machine:");
+        Console.WriteLine(bug.ToDotGraph());
 
-            Console.ReadKey(false);
-        }
+        Console.ReadKey(false);
     }
 }

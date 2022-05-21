@@ -1,7 +1,6 @@
-namespace Stateless.Tests
+namespace Stateless.Tests;
+
+enum State
 {
-    enum State
-    {
-        A, B, C, D
-    }
+    A, B, C, D
 }

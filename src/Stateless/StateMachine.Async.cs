@@ -1,373 +1,372 @@
 #if TASKS
 
 
-namespace Stateless
+namespace Stateless;
+
+public partial class StateMachine<TState, TTrigger>
 {
-    public partial class StateMachine<TState, TTrigger>
+    /// <summary>
+    /// Activates current state in asynchronous fashion. Actions associated with activating the currrent state
+    /// will be invoked. The activation is idempotent and subsequent activation of the same current state 
+    /// will not lead to re-execution of activation callbacks.
+    /// </summary>
+    public Task ActivateAsync()
     {
-        /// <summary>
-        /// Activates current state in asynchronous fashion. Actions associated with activating the currrent state
-        /// will be invoked. The activation is idempotent and subsequent activation of the same current state 
-        /// will not lead to re-execution of activation callbacks.
-        /// </summary>
-        public Task ActivateAsync()
+        StateRepresentation representativeState = GetRepresentation(State);
+        return representativeState.ActivateAsync();
+    }
+
+    /// <summary>
+    /// Deactivates current state in asynchronous fashion. Actions associated with deactivating the currrent state
+    /// will be invoked. The deactivation is idempotent and subsequent deactivation of the same current state 
+    /// will not lead to re-execution of deactivation callbacks.
+    /// </summary>
+    public Task DeactivateAsync()
+    {
+        StateRepresentation representativeState = GetRepresentation(State);
+        return representativeState.DeactivateAsync();
+    }
+
+    /// <summary>
+    /// Transition from the current state via the specified trigger in async fashion.
+    /// The target state is determined by the configuration of the current state.
+    /// Actions associated with leaving the current state and entering the new one
+    /// will be invoked.
+    /// </summary>
+    /// <param name="trigger">The trigger to fire.</param>
+    /// <exception cref="System.InvalidOperationException">The current state does
+    /// not allow the trigger to be fired.</exception>
+    public Task FireAsync(TTrigger trigger)
+    {
+        return InternalFireAsync(trigger, Array.Empty<object>());
+    }
+
+    /// <summary>
+    /// Transition from the current state via the specified trigger in async fashion.
+    /// The target state is determined by the configuration of the current state.
+    /// Actions associated with leaving the current state and entering the new one
+    /// will be invoked.
+    /// </summary>
+    /// <typeparam name="TArg0">Type of the first trigger argument.</typeparam>
+    /// <param name="trigger">The trigger to fire.</param>
+    /// <param name="arg0">The first argument.</param>
+    /// <exception cref="System.InvalidOperationException">The current state does
+    /// not allow the trigger to be fired.</exception>
+    public Task FireAsync<TArg0>(TriggerWithParameters<TArg0> trigger, TArg0 arg0)
+    {
+        if (trigger == null)
         {
-            StateRepresentation representativeState = GetRepresentation(State);
-            return representativeState.ActivateAsync();
+            throw new ArgumentNullException(nameof(trigger));
         }
 
-        /// <summary>
-        /// Deactivates current state in asynchronous fashion. Actions associated with deactivating the currrent state
-        /// will be invoked. The deactivation is idempotent and subsequent deactivation of the same current state 
-        /// will not lead to re-execution of deactivation callbacks.
-        /// </summary>
-        public Task DeactivateAsync()
+        return InternalFireAsync(trigger.Trigger, arg0);
+    }
+
+    /// <summary>
+    /// Transition from the current state via the specified trigger in async fashion.
+    /// The target state is determined by the configuration of the current state.
+    /// Actions associated with leaving the current state and entering the new one
+    /// will be invoked.
+    /// </summary>
+    /// <typeparam name="TArg0">Type of the first trigger argument.</typeparam>
+    /// <typeparam name="TArg1">Type of the second trigger argument.</typeparam>
+    /// <param name="arg0">The first argument.</param>
+    /// <param name="arg1">The second argument.</param>
+    /// <param name="trigger">The trigger to fire.</param>
+    /// <exception cref="System.InvalidOperationException">The current state does
+    /// not allow the trigger to be fired.</exception>
+    public Task FireAsync<TArg0, TArg1>(TriggerWithParameters<TArg0, TArg1> trigger, TArg0 arg0, TArg1 arg1)
+    {
+        if (trigger == null)
         {
-            StateRepresentation representativeState = GetRepresentation(State);
-            return representativeState.DeactivateAsync();
+            throw new ArgumentNullException(nameof(trigger));
         }
 
-        /// <summary>
-        /// Transition from the current state via the specified trigger in async fashion.
-        /// The target state is determined by the configuration of the current state.
-        /// Actions associated with leaving the current state and entering the new one
-        /// will be invoked.
-        /// </summary>
-        /// <param name="trigger">The trigger to fire.</param>
-        /// <exception cref="System.InvalidOperationException">The current state does
-        /// not allow the trigger to be fired.</exception>
-        public Task FireAsync(TTrigger trigger)
+        return InternalFireAsync(trigger.Trigger, arg0, arg1);
+    }
+
+    /// <summary>
+    /// Transition from the current state via the specified trigger in async fashion.
+    /// The target state is determined by the configuration of the current state.
+    /// Actions associated with leaving the current state and entering the new one
+    /// will be invoked.
+    /// </summary>
+    /// <typeparam name="TArg0">Type of the first trigger argument.</typeparam>
+    /// <typeparam name="TArg1">Type of the second trigger argument.</typeparam>
+    /// <typeparam name="TArg2">Type of the third trigger argument.</typeparam>
+    /// <param name="arg0">The first argument.</param>
+    /// <param name="arg1">The second argument.</param>
+    /// <param name="arg2">The third argument.</param>
+    /// <param name="trigger">The trigger to fire.</param>
+    /// <exception cref="System.InvalidOperationException">The current state does
+    /// not allow the trigger to be fired.</exception>
+    public Task FireAsync<TArg0, TArg1, TArg2>(TriggerWithParameters<TArg0, TArg1, TArg2> trigger, TArg0 arg0, TArg1 arg1, TArg2 arg2)
+    {
+        if (trigger == null)
         {
-            return InternalFireAsync(trigger, Array.Empty<object>());
+            throw new ArgumentNullException(nameof(trigger));
         }
 
-        /// <summary>
-        /// Transition from the current state via the specified trigger in async fashion.
-        /// The target state is determined by the configuration of the current state.
-        /// Actions associated with leaving the current state and entering the new one
-        /// will be invoked.
-        /// </summary>
-        /// <typeparam name="TArg0">Type of the first trigger argument.</typeparam>
-        /// <param name="trigger">The trigger to fire.</param>
-        /// <param name="arg0">The first argument.</param>
-        /// <exception cref="System.InvalidOperationException">The current state does
-        /// not allow the trigger to be fired.</exception>
-        public Task FireAsync<TArg0>(TriggerWithParameters<TArg0> trigger, TArg0 arg0)
+        return InternalFireAsync(trigger.Trigger, arg0, arg1, arg2);
+    }
+
+    /// <summary>
+    /// Determine how to Fire the trigger
+    /// </summary>
+    /// <param name="trigger">The trigger. </param>
+    /// <param name="args">A variable-length parameters list containing arguments. </param>
+    async Task InternalFireAsync(TTrigger trigger, params object[] args)
+    {
+        switch (_firingMode)
         {
-            if (trigger == null)
+            case FiringMode.Immediate:
+                await InternalFireOneAsync(trigger, args);
+                break;
+            case FiringMode.Queued:
+                await InternalFireQueuedAsync(trigger, args);
+                break;
+            default:
+                // If something is completely messed up we let the user know ;-)
+                throw new InvalidOperationException("The firing mode has not been configured!");
+        }
+    }
+
+    /// <summary>
+    /// Queue events and then fire in order.
+    /// If only one event is queued, this behaves identically to the non-queued version.
+    /// </summary>
+    /// <param name="trigger">  The trigger. </param>
+    /// <param name="args">     A variable-length parameters list containing arguments. </param>
+    async Task InternalFireQueuedAsync(TTrigger trigger, params object[] args)
+    {
+        if (_firing)
+        {
+            _eventQueue.Enqueue(new QueuedTrigger { Trigger = trigger, Args = args });
+            return;
+        }
+
+        try
+        {
+            _firing = true;
+
+            await InternalFireOneAsync(trigger, args).ConfigureAwait(false);
+
+            while (_eventQueue.Count != 0)
             {
-                throw new ArgumentNullException(nameof(trigger));
+                QueuedTrigger queuedEvent = _eventQueue.Dequeue();
+                await InternalFireOneAsync(queuedEvent.Trigger, queuedEvent.Args).ConfigureAwait(false);
             }
+        }
+        finally
+        {
+            _firing = false;
+        }
+    }
 
-            return InternalFireAsync(trigger.Trigger, arg0);
+    async Task InternalFireOneAsync(TTrigger trigger, params object[] args)
+    {
+        // If this is a trigger with parameters, we must validate the parameter(s)
+        if (_triggerConfiguration.TryGetValue(trigger, out TriggerWithParameters configuration))
+        {
+            configuration.ValidateParameters(args);
         }
 
-        /// <summary>
-        /// Transition from the current state via the specified trigger in async fashion.
-        /// The target state is determined by the configuration of the current state.
-        /// Actions associated with leaving the current state and entering the new one
-        /// will be invoked.
-        /// </summary>
-        /// <typeparam name="TArg0">Type of the first trigger argument.</typeparam>
-        /// <typeparam name="TArg1">Type of the second trigger argument.</typeparam>
-        /// <param name="arg0">The first argument.</param>
-        /// <param name="arg1">The second argument.</param>
-        /// <param name="trigger">The trigger to fire.</param>
-        /// <exception cref="System.InvalidOperationException">The current state does
-        /// not allow the trigger to be fired.</exception>
-        public Task FireAsync<TArg0, TArg1>(TriggerWithParameters<TArg0, TArg1> trigger, TArg0 arg0, TArg1 arg1)
-        {
-            if (trigger == null)
-            {
-                throw new ArgumentNullException(nameof(trigger));
-            }
+        TState source = State;
+        StateRepresentation representativeState = GetRepresentation(source);
 
-            return InternalFireAsync(trigger.Trigger, arg0, arg1);
+        // Try to find a trigger handler, either in the current state or a super state.
+        if (!representativeState.TryFindHandler(trigger, args, out TriggerBehaviourResult result))
+        {
+            await _unhandledTriggerAction.ExecuteAsync(representativeState.UnderlyingState, trigger, result?.UnmetGuardConditions);
+            return;
         }
 
-        /// <summary>
-        /// Transition from the current state via the specified trigger in async fashion.
-        /// The target state is determined by the configuration of the current state.
-        /// Actions associated with leaving the current state and entering the new one
-        /// will be invoked.
-        /// </summary>
-        /// <typeparam name="TArg0">Type of the first trigger argument.</typeparam>
-        /// <typeparam name="TArg1">Type of the second trigger argument.</typeparam>
-        /// <typeparam name="TArg2">Type of the third trigger argument.</typeparam>
-        /// <param name="arg0">The first argument.</param>
-        /// <param name="arg1">The second argument.</param>
-        /// <param name="arg2">The third argument.</param>
-        /// <param name="trigger">The trigger to fire.</param>
-        /// <exception cref="System.InvalidOperationException">The current state does
-        /// not allow the trigger to be fired.</exception>
-        public Task FireAsync<TArg0, TArg1, TArg2>(TriggerWithParameters<TArg0, TArg1, TArg2> trigger, TArg0 arg0, TArg1 arg1, TArg2 arg2)
+        switch (result.Handler)
         {
-            if (trigger == null)
-            {
-                throw new ArgumentNullException(nameof(trigger));
-            }
-
-            return InternalFireAsync(trigger.Trigger, arg0, arg1, arg2);
-        }
-
-        /// <summary>
-        /// Determine how to Fire the trigger
-        /// </summary>
-        /// <param name="trigger">The trigger. </param>
-        /// <param name="args">A variable-length parameters list containing arguments. </param>
-        async Task InternalFireAsync(TTrigger trigger, params object[] args)
-        {
-            switch (_firingMode)
-            {
-                case FiringMode.Immediate:
-                    await InternalFireOneAsync(trigger, args);
-                    break;
-                case FiringMode.Queued:
-                    await InternalFireQueuedAsync(trigger, args);
-                    break;
-                default:
-                    // If something is completely messed up we let the user know ;-)
-                    throw new InvalidOperationException("The firing mode has not been configured!");
-            }
-        }
-
-        /// <summary>
-        /// Queue events and then fire in order.
-        /// If only one event is queued, this behaves identically to the non-queued version.
-        /// </summary>
-        /// <param name="trigger">  The trigger. </param>
-        /// <param name="args">     A variable-length parameters list containing arguments. </param>
-        async Task InternalFireQueuedAsync(TTrigger trigger, params object[] args)
-        {
-            if (_firing)
-            {
-                _eventQueue.Enqueue(new QueuedTrigger { Trigger = trigger, Args = args });
+            // Check if this trigger should be ignored
+            case IgnoredTriggerBehaviour _:
                 return;
-            }
-
-            try
-            {
-                _firing = true;
-
-                await InternalFireOneAsync(trigger, args).ConfigureAwait(false);
-
-                while (_eventQueue.Count != 0)
+            // Handle special case, re-entry in superstate
+            // Check if it is an internal transition, or a transition from one state to another.
+            case ReentryTriggerBehaviour handler:
                 {
-                    QueuedTrigger queuedEvent = _eventQueue.Dequeue();
-                    await InternalFireOneAsync(queuedEvent.Trigger, queuedEvent.Args).ConfigureAwait(false);
+                    // Handle transition, and set new state
+                    Transition transition = new(source, handler.Destination, trigger, args);
+                    await HandleReentryTriggerAsync(args, representativeState, transition);
+                    break;
                 }
-            }
-            finally
-            {
-                _firing = false;
-            }
+            case DynamicTriggerBehaviour _ when (result.Handler.ResultsInTransitionFrom(source, args, out TState destination)):
+            case TransitioningTriggerBehaviour _ when (result.Handler.ResultsInTransitionFrom(source, args, out destination)):
+                {
+                    // Handle transition, and set new state
+                    Transition transition = new(source, destination, trigger, args);
+                    await HandleTransitioningTriggerAsync(args, representativeState, transition);
+
+                    break;
+                }
+            case InternalTriggerBehaviour itb:
+                {
+                    // Internal transitions does not update the current state, but must execute the associated action.
+                    Transition transition = new(source, source, trigger, args);
+
+                    if (itb is InternalTriggerBehaviour.Async ita)
+                    {
+                        await ita.ExecuteAsync(transition, args);
+                    }
+                    else
+                    {
+                        await Task.Run(() => itb.Execute(transition, args));
+                    }
+
+                    break;
+                }
+            default:
+                throw new InvalidOperationException("State machine configuration incorrect, no handler for trigger.");
         }
+    }
 
-        async Task InternalFireOneAsync(TTrigger trigger, params object[] args)
+    private async Task HandleReentryTriggerAsync(object[] args, StateRepresentation representativeState, Transition transition)
+    {
+        StateRepresentation representation;
+        transition = await representativeState.ExitAsync(transition);
+        StateRepresentation newRepresentation = GetRepresentation(transition.Destination);
+
+        if (!transition.Source.Equals(transition.Destination))
         {
-            // If this is a trigger with parameters, we must validate the parameter(s)
-            if (_triggerConfiguration.TryGetValue(trigger, out TriggerWithParameters configuration))
-            {
-                configuration.ValidateParameters(args);
-            }
+            // Then Exit the final superstate
+            transition = new Transition(transition.Destination, transition.Destination, transition.Trigger, args);
+            await newRepresentation.ExitAsync(transition);
 
-            TState source = State;
-            StateRepresentation representativeState = GetRepresentation(source);
-
-            // Try to find a trigger handler, either in the current state or a super state.
-            if (!representativeState.TryFindHandler(trigger, args, out TriggerBehaviourResult result))
-            {
-                await _unhandledTriggerAction.ExecuteAsync(representativeState.UnderlyingState, trigger, result?.UnmetGuardConditions);
-                return;
-            }
-
-            switch (result.Handler)
-            {
-                // Check if this trigger should be ignored
-                case IgnoredTriggerBehaviour _:
-                    return;
-                // Handle special case, re-entry in superstate
-                // Check if it is an internal transition, or a transition from one state to another.
-                case ReentryTriggerBehaviour handler:
-                    {
-                        // Handle transition, and set new state
-                        Transition transition = new(source, handler.Destination, trigger, args);
-                        await HandleReentryTriggerAsync(args, representativeState, transition);
-                        break;
-                    }
-                case DynamicTriggerBehaviour _ when (result.Handler.ResultsInTransitionFrom(source, args, out TState destination)):
-                case TransitioningTriggerBehaviour _ when (result.Handler.ResultsInTransitionFrom(source, args, out destination)):
-                    {
-                        // Handle transition, and set new state
-                        Transition transition = new(source, destination, trigger, args);
-                        await HandleTransitioningTriggerAsync(args, representativeState, transition);
-
-                        break;
-                    }
-                case InternalTriggerBehaviour itb:
-                    {
-                        // Internal transitions does not update the current state, but must execute the associated action.
-                        Transition transition = new(source, source, trigger, args);
-
-                        if (itb is InternalTriggerBehaviour.Async ita)
-                        {
-                            await ita.ExecuteAsync(transition, args);
-                        }
-                        else
-                        {
-                            await Task.Run(() => itb.Execute(transition, args));
-                        }
-
-                        break;
-                    }
-                default:
-                    throw new InvalidOperationException("State machine configuration incorrect, no handler for trigger.");
-            }
+            await _onTransitionedEvent.InvokeAsync(transition);
+            representation = await EnterStateAsync(newRepresentation, transition, args);
+            await _onTransitionCompletedEvent.InvokeAsync(transition);
         }
-
-        private async Task HandleReentryTriggerAsync(object[] args, StateRepresentation representativeState, Transition transition)
+        else
         {
-            StateRepresentation representation;
-            transition = await representativeState.ExitAsync(transition);
-            StateRepresentation newRepresentation = GetRepresentation(transition.Destination);
+            await _onTransitionedEvent.InvokeAsync(transition);
+            representation = await EnterStateAsync(newRepresentation, transition, args);
+            await _onTransitionCompletedEvent.InvokeAsync(transition);
+        }
+        State = representation.UnderlyingState;
+    }
 
-            if (!transition.Source.Equals(transition.Destination))
-            {
-                // Then Exit the final superstate
-                transition = new Transition(transition.Destination, transition.Destination, transition.Trigger, args);
-                await newRepresentation.ExitAsync(transition);
+    private async Task HandleTransitioningTriggerAsync(object[] args, StateRepresentation representativeState, Transition transition)
+    {
+        transition = await representativeState.ExitAsync(transition);
 
-                await _onTransitionedEvent.InvokeAsync(transition);
-                representation = await EnterStateAsync(newRepresentation, transition, args);
-                await _onTransitionCompletedEvent.InvokeAsync(transition);
-            }
-            else
-            {
-                await _onTransitionedEvent.InvokeAsync(transition);
-                representation = await EnterStateAsync(newRepresentation, transition, args);
-                await _onTransitionCompletedEvent.InvokeAsync(transition);
-            }
+        State = transition.Destination;
+        StateRepresentation newRepresentation = GetRepresentation(transition.Destination);
+
+        //Alert all listeners of state transition
+        await _onTransitionedEvent.InvokeAsync(transition);
+        StateRepresentation representation = await EnterStateAsync(newRepresentation, transition, args);
+
+        // Check if state has changed by entering new state (by fireing triggers in OnEntry or such)
+        if (!representation.UnderlyingState.Equals(State))
+        {
+            // The state has been changed after entering the state, must update current state to new one
             State = representation.UnderlyingState;
         }
 
-        private async Task HandleTransitioningTriggerAsync(object[] args, StateRepresentation representativeState, Transition transition)
+        await _onTransitionCompletedEvent.InvokeAsync(new Transition(transition.Source, State, transition.Trigger, transition.Parameters));
+    }
+
+
+    private async Task<StateRepresentation> EnterStateAsync(StateRepresentation representation, Transition transition, object[] args)
+    {
+        // Enter the new state
+        await representation.EnterAsync(transition, args);
+
+        if (FiringMode.Immediate.Equals(_firingMode) && !State.Equals(transition.Destination))
         {
-            transition = await representativeState.ExitAsync(transition);
-
-            State = transition.Destination;
-            StateRepresentation newRepresentation = GetRepresentation(transition.Destination);
-
-            //Alert all listeners of state transition
-            await _onTransitionedEvent.InvokeAsync(transition);
-            StateRepresentation representation = await EnterStateAsync(newRepresentation, transition, args);
-
-            // Check if state has changed by entering new state (by fireing triggers in OnEntry or such)
-            if (!representation.UnderlyingState.Equals(State))
-            {
-                // The state has been changed after entering the state, must update current state to new one
-                State = representation.UnderlyingState;
-            }
-
-            await _onTransitionCompletedEvent.InvokeAsync(new Transition(transition.Source, State, transition.Trigger, transition.Parameters));
+            // This can happen if triggers are fired in OnEntry
+            // Must update current representation with updated State
+            representation = GetRepresentation(State);
+            transition = new Transition(transition.Source, State, transition.Trigger, args);
         }
 
-
-        private async Task<StateRepresentation> EnterStateAsync(StateRepresentation representation, Transition transition, object[] args)
+        // Recursively enter substates that have an initial transition
+        if (representation.HasInitialTransition)
         {
-            // Enter the new state
-            await representation.EnterAsync(transition, args);
-
-            if (FiringMode.Immediate.Equals(_firingMode) && !State.Equals(transition.Destination))
+            // Verify that the target state is a substate
+            // Check if state has substate(s), and if an initial transition(s) has been set up.
+            if (!representation.GetSubstates().Any(s => s.UnderlyingState.Equals(representation.InitialTransitionTarget)))
             {
-                // This can happen if triggers are fired in OnEntry
-                // Must update current representation with updated State
-                representation = GetRepresentation(State);
-                transition = new Transition(transition.Source, State, transition.Trigger, args);
+                throw new InvalidOperationException($"The target ({representation.InitialTransitionTarget}) for the initial transition is not a substate.");
             }
 
-            // Recursively enter substates that have an initial transition
-            if (representation.HasInitialTransition)
-            {
-                // Verify that the target state is a substate
-                // Check if state has substate(s), and if an initial transition(s) has been set up.
-                if (!representation.GetSubstates().Any(s => s.UnderlyingState.Equals(representation.InitialTransitionTarget)))
-                {
-                    throw new InvalidOperationException($"The target ({representation.InitialTransitionTarget}) for the initial transition is not a substate.");
-                }
+            InitialTransition initialTransition = new(transition.Source, representation.InitialTransitionTarget, transition.Trigger, args);
+            representation = GetRepresentation(representation.InitialTransitionTarget);
 
-                InitialTransition initialTransition = new(transition.Source, representation.InitialTransitionTarget, transition.Trigger, args);
-                representation = GetRepresentation(representation.InitialTransitionTarget);
-
-                // Alert all listeners of initial state transition
-                await _onTransitionedEvent.InvokeAsync(new Transition(transition.Destination, initialTransition.Destination, transition.Trigger, transition.Parameters));
-                representation = await EnterStateAsync(representation, initialTransition, args);
-            }
-
-            return representation;
+            // Alert all listeners of initial state transition
+            await _onTransitionedEvent.InvokeAsync(new Transition(transition.Destination, initialTransition.Destination, transition.Trigger, transition.Parameters));
+            representation = await EnterStateAsync(representation, initialTransition, args);
         }
 
-        /// <summary>
-        /// Override the default behaviour of throwing an exception when an unhandled trigger
-        /// is fired.
-        /// </summary>
-        /// <param name="unhandledTriggerAction"></param>
-        public void OnUnhandledTriggerAsync(Func<TState, TTrigger, Task> unhandledTriggerAction)
-        {
-            if (unhandledTriggerAction == null)
-            {
-                throw new ArgumentNullException(nameof(unhandledTriggerAction));
-            }
+        return representation;
+    }
 
-            _unhandledTriggerAction = new UnhandledTriggerAction.Async((s, t, c) => unhandledTriggerAction(s, t));
+    /// <summary>
+    /// Override the default behaviour of throwing an exception when an unhandled trigger
+    /// is fired.
+    /// </summary>
+    /// <param name="unhandledTriggerAction"></param>
+    public void OnUnhandledTriggerAsync(Func<TState, TTrigger, Task> unhandledTriggerAction)
+    {
+        if (unhandledTriggerAction == null)
+        {
+            throw new ArgumentNullException(nameof(unhandledTriggerAction));
         }
 
-        /// <summary>
-        /// Override the default behaviour of throwing an exception when an unhandled trigger
-        /// is fired.
-        /// </summary>
-        /// <param name="unhandledTriggerAction">An asynchronous action to call when an unhandled trigger is fired.</param>
-        public void OnUnhandledTriggerAsync(Func<TState, TTrigger, ICollection<string>, Task> unhandledTriggerAction)
-        {
-            if (unhandledTriggerAction == null)
-            {
-                throw new ArgumentNullException(nameof(unhandledTriggerAction));
-            }
+        _unhandledTriggerAction = new UnhandledTriggerAction.Async((s, t, c) => unhandledTriggerAction(s, t));
+    }
 
-            _unhandledTriggerAction = new UnhandledTriggerAction.Async(unhandledTriggerAction);
+    /// <summary>
+    /// Override the default behaviour of throwing an exception when an unhandled trigger
+    /// is fired.
+    /// </summary>
+    /// <param name="unhandledTriggerAction">An asynchronous action to call when an unhandled trigger is fired.</param>
+    public void OnUnhandledTriggerAsync(Func<TState, TTrigger, ICollection<string>, Task> unhandledTriggerAction)
+    {
+        if (unhandledTriggerAction == null)
+        {
+            throw new ArgumentNullException(nameof(unhandledTriggerAction));
         }
 
-        /// <summary>
-        /// Registers an asynchronous callback that will be invoked every time the statemachine
-        /// transitions from one state into another.
-        /// </summary>
-        /// <param name="onTransitionAction">The asynchronous action to execute, accepting the details
-        /// of the transition.</param>
-        public void OnTransitionedAsync(Func<Transition, Task> onTransitionAction)
-        {
-            if (onTransitionAction == null)
-            {
-                throw new ArgumentNullException(nameof(onTransitionAction));
-            }
+        _unhandledTriggerAction = new UnhandledTriggerAction.Async(unhandledTriggerAction);
+    }
 
-            _onTransitionedEvent.Register(onTransitionAction);
+    /// <summary>
+    /// Registers an asynchronous callback that will be invoked every time the statemachine
+    /// transitions from one state into another.
+    /// </summary>
+    /// <param name="onTransitionAction">The asynchronous action to execute, accepting the details
+    /// of the transition.</param>
+    public void OnTransitionedAsync(Func<Transition, Task> onTransitionAction)
+    {
+        if (onTransitionAction == null)
+        {
+            throw new ArgumentNullException(nameof(onTransitionAction));
         }
 
-        /// <summary>
-        /// Registers a callback that will be invoked every time the statemachine
-        /// transitions from one state into another and all the OnEntryFrom etc methods
-        /// have been invoked
-        /// </summary>
-        /// <param name="onTransitionAction">The asynchronous action to execute, accepting the details
-        /// of the transition.</param>
-        public void OnTransitionCompletedAsync(Func<Transition, Task> onTransitionAction)
-        {
-            if (onTransitionAction == null)
-            {
-                throw new ArgumentNullException(nameof(onTransitionAction));
-            }
+        _onTransitionedEvent.Register(onTransitionAction);
+    }
 
-            _onTransitionCompletedEvent.Register(onTransitionAction);
+    /// <summary>
+    /// Registers a callback that will be invoked every time the statemachine
+    /// transitions from one state into another and all the OnEntryFrom etc methods
+    /// have been invoked
+    /// </summary>
+    /// <param name="onTransitionAction">The asynchronous action to execute, accepting the details
+    /// of the transition.</param>
+    public void OnTransitionCompletedAsync(Func<Transition, Task> onTransitionAction)
+    {
+        if (onTransitionAction == null)
+        {
+            throw new ArgumentNullException(nameof(onTransitionAction));
         }
+
+        _onTransitionCompletedEvent.Register(onTransitionAction);
     }
 }
 
