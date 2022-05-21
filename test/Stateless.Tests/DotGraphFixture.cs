@@ -183,7 +183,7 @@ public class DotGraphFixture
     [Fact]
     public void WhenDiscriminatedByAnonymousGuard()
     {
-        bool anonymousGuard()
+        static bool anonymousGuard()
         {
             return true;
         }
@@ -203,7 +203,7 @@ public class DotGraphFixture
     [Fact]
     public void WhenDiscriminatedByAnonymousGuardWithDescription()
     {
-        bool anonymousGuard()
+        static bool anonymousGuard()
         {
             return true;
         }
@@ -390,7 +390,7 @@ public class DotGraphFixture
             + Line("A", "B", "Z [IsTriggerZ]")
             + suffix;
 
-        bool anonymousGuard()
+        static bool anonymousGuard()
         {
             return true;
         }

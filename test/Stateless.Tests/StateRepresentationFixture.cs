@@ -349,7 +349,7 @@ public class StateRepresentationFixture
 
     }
 
-    void CreateSuperSubstatePair(out StateMachine<State, Trigger>.StateRepresentation super, out StateMachine<State, Trigger>.StateRepresentation sub)
+    static void CreateSuperSubstatePair(out StateMachine<State, Trigger>.StateRepresentation super, out StateMachine<State, Trigger>.StateRepresentation sub)
     {
         super = CreateRepresentation(State.A);
         sub = CreateRepresentation(State.B);

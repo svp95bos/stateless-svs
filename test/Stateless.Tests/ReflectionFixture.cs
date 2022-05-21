@@ -173,7 +173,7 @@ public class ReflectionFixture
     [Fact]
     public void WhenDiscriminatedByAnonymousGuard_Binding()
     {
-        bool anonymousGuard()
+        static bool anonymousGuard()
         {
             return true;
         }
@@ -216,7 +216,7 @@ public class ReflectionFixture
     [Fact]
     public void WhenDiscriminatedByAnonymousGuardWithDescription_Binding()
     {
-        bool anonymousGuard()
+        static bool anonymousGuard()
         {
             return true;
         }

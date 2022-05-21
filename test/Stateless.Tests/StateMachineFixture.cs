@@ -419,7 +419,7 @@ public class StateMachineFixture
         Assert.Equal(Trigger.X, transition.Trigger);
         Assert.Equal(State.B, transition.Source);
         Assert.Equal(State.A, transition.Destination);
-        Assert.Equal(1, transition.Parameters.Count());
+        Assert.Equal(1, transition.Parameters.Length);
         Assert.Equal(parameter, transition.Parameters[0]);
     }
 
@@ -442,7 +442,7 @@ public class StateMachineFixture
         Assert.Equal(Trigger.X, transition.Trigger);
         Assert.Equal(State.B, transition.Source);
         Assert.Equal(State.A, transition.Destination);
-        Assert.Equal(1, transition.Parameters.Count());
+        Assert.Equal(1, transition.Parameters.Length);
         Assert.Equal(parameter, transition.Parameters[0]);
     }
 
@@ -467,7 +467,7 @@ public class StateMachineFixture
         Assert.Equal(Trigger.X, transition.Trigger);
         Assert.Equal(State.B, transition.Source);
         Assert.Equal(State.A, transition.Destination);
-        Assert.Equal(3, transition.Parameters.Count());
+        Assert.Equal(3, transition.Parameters.Length);
         Assert.Equal(firstParameter, transition.Parameters[0]);
         Assert.Equal(secondParameter, transition.Parameters[1]);
         Assert.Equal(thirdParameter, transition.Parameters[2]);
@@ -494,7 +494,7 @@ public class StateMachineFixture
         Assert.Equal(Trigger.X, transition.Trigger);
         Assert.Equal(State.B, transition.Source);
         Assert.Equal(State.A, transition.Destination);
-        Assert.Equal(3, transition.Parameters.Count());
+        Assert.Equal(3, transition.Parameters.Length);
         Assert.Equal(firstParameter, transition.Parameters[0]);
         Assert.Equal(secondParameter, transition.Parameters[1]);
         Assert.Equal(thirdParameter, transition.Parameters[2]);
