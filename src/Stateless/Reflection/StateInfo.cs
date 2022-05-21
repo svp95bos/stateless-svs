@@ -9,7 +9,7 @@ public class StateInfo
     {
         if (stateRepresentation == null)
         {
-            throw new ArgumentException(nameof(stateRepresentation));
+            throw new ArgumentException("State representation is null", nameof(stateRepresentation));
         }
 
         List<IgnoredTransitionInfo> ignoredTriggers = new();
