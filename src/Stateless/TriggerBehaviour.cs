@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Stateless
+﻿namespace Stateless
 {
     public partial class StateMachine<TState, TTrigger>
     {
@@ -34,7 +31,7 @@ namespace Stateless
             /// <summary>
             /// Guards is the list of guard functions for the transition guard for this trigger
             /// </summary>
-            internal ICollection<Func<object[], bool>> Guards =>_guard.Guards;
+            internal ICollection<Func<object[], bool>> Guards => _guard.Guards;
 
             /// <summary>
             /// GuardConditionsMet is true if all of the guard functions return true

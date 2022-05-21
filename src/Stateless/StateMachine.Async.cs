@@ -1,9 +1,5 @@
 #if TASKS
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Stateless
 {
@@ -247,7 +243,7 @@ namespace Stateless
 
             //Alert all listeners of state transition
             await _onTransitionedEvent.InvokeAsync(transition);
-            var representation =await EnterStateAsync(newRepresentation, transition, args);
+            var representation = await EnterStateAsync(newRepresentation, transition, args);
 
             // Check if state has changed by entering new state (by fireing triggers in OnEntry or such)
             if (!representation.UnderlyingState.Equals(State))
@@ -256,7 +252,7 @@ namespace Stateless
                 State = representation.UnderlyingState;
             }
 
-           await _onTransitionCompletedEvent.InvokeAsync(new Transition(transition.Source, State, transition.Trigger, transition.Parameters));
+            await _onTransitionCompletedEvent.InvokeAsync(new Transition(transition.Source, State, transition.Trigger, transition.Parameters));
         }
 
 

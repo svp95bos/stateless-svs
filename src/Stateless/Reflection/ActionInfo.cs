@@ -24,7 +24,7 @@
             else
                 return new ActionInfo(entryAction.Description, null);
         }
-        
+
         /// <summary>
         /// Constructor
         /// </summary>

@@ -1,7 +1,5 @@
 #if TASKS
 
-using System;
-using System.Threading.Tasks;
 
 namespace Stateless
 {
@@ -90,7 +88,7 @@ namespace Stateless
                     await ExecuteEntryActionsAsync(transition, entryArgs).ConfigureAwait(false);
                 }
             }
-            
+
             public async Task<Transition> ExitAsync(Transition transition)
             {
                 if (transition.IsReentry)

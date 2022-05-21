@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace Stateless
+﻿namespace Stateless
 {
     public partial class StateMachine<TState, TTrigger>
     {
@@ -21,7 +18,7 @@ namespace Stateless
             }
 
 
-            public class Sync: InternalTriggerBehaviour
+            public class Sync : InternalTriggerBehaviour
             {
                 public Action<Transition, object[]> InternalAction { get; }
 
@@ -45,7 +42,7 @@ namespace Stateless
             {
                 readonly Func<Transition, object[], Task> InternalAction;
 
-                public Async(TTrigger trigger, Func<bool> guard,Func<Transition, object[], Task> internalAction, string guardDescription = null) : base(trigger, new TransitionGuard(guard, guardDescription))
+                public Async(TTrigger trigger, Func<bool> guard, Func<Transition, object[], Task> internalAction, string guardDescription = null) : base(trigger, new TransitionGuard(guard, guardDescription))
                 {
                     InternalAction = internalAction;
                 }

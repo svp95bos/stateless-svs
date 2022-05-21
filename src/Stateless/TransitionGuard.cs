@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Stateless
+﻿namespace Stateless
 {
     public partial class StateMachine<TState, TTrigger>
     {
@@ -10,7 +6,7 @@ namespace Stateless
         {
             internal IList<GuardCondition> Conditions { get; }
 
-            public static readonly TransitionGuard Empty = new TransitionGuard(new Tuple<Func<object[],bool>, string>[0]);
+            public static readonly TransitionGuard Empty = new TransitionGuard(new Tuple<Func<object[], bool>, string>[0]);
 
             #region Generic TArg0, ... to object[] converters
 
@@ -22,7 +18,7 @@ namespace Stateless
             public static Func<object[], bool> ToPackedGuard<TArg0, TArg1>(Func<TArg0, TArg1, bool> guard)
             {
                 return args => guard(
-                    ParameterConversion.Unpack<TArg0>(args, 0), 
+                    ParameterConversion.Unpack<TArg0>(args, 0),
                     ParameterConversion.Unpack<TArg1>(args, 1));
             }
 
@@ -86,7 +82,7 @@ namespace Stateless
                     new GuardCondition(guard, Reflection.InvocationInfo.Create(guard, description))
                 };
             }
-            
+
             /// <summary>
             /// Guards is the list of the guard functions for all guard conditions for this transition
             /// </summary>

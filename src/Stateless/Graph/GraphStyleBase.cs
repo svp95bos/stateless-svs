@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Stateless.Graph
+﻿namespace Stateless.Graph
 {
     /// <summary>
     /// Style definition for StateGraph.
@@ -57,7 +53,7 @@ namespace Stateless.Graph
         /// <returns>Description of all transitions, in the desired format</returns>
         public virtual List<string> FormatAllTransitions(List<Transition> transitions)
         {
-            List<string> lines = new List<string>();
+            List<string> lines = new();
             if (transitions == null) return lines;
 
             foreach (var transit in transitions)

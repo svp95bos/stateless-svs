@@ -14,7 +14,7 @@
         /// The instance or value this trigger represents.
         /// </summary>
         public object UnderlyingTrigger { get; }
-        
+
         /// <summary>
         /// Describes the trigger.
         /// </summary>

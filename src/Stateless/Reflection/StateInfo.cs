@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Stateless.Reflection
+﻿namespace Stateless.Reflection
 {
     /// <summary>
     /// Describes an internal StateRepresentation through the reflection API.
@@ -34,7 +30,7 @@ namespace Stateless.Reflection
                 stateRepresentation.DeactivateActions.Select(e => e.Description).ToList(),
                 stateRepresentation.ExitActions.Select(e => e.Description).ToList());
         }
- 
+
         internal static void AddRelationships<TState, TTrigger>(StateInfo info, StateMachine<TState, TTrigger>.StateRepresentation stateRepresentation, Func<TState, StateInfo> lookupState)
         {
             if (lookupState == null) throw new ArgumentNullException(nameof(lookupState));
