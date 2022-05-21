@@ -22,15 +22,9 @@ public partial class StateMachine<TState, TTrigger>
             _state = state;
         }
 
-        internal ICollection<StateRepresentation> GetSubstates()
-        {
-            return _substates;
-        }
+        internal ICollection<StateRepresentation> GetSubstates() => _substates;
 
-        public bool CanHandle(TTrigger trigger, params object[] args)
-        {
-            return TryFindHandler(trigger, args, out TriggerBehaviourResult _);
-        }
+        public bool CanHandle(TTrigger trigger, params object[] args) => TryFindHandler(trigger, args, out TriggerBehaviourResult _);
 
         public bool CanHandle(TTrigger trigger, object[] args, out ICollection<string> unmetGuards)
         {
@@ -115,30 +109,15 @@ public partial class StateMachine<TState, TTrigger>
             return result;
         }
 
-        public void AddActivateAction(Action action, Reflection.InvocationInfo activateActionDescription)
-        {
-            ActivateActions.Add(new ActivateActionBehaviour.Sync(_state, action, activateActionDescription));
-        }
+        public void AddActivateAction(Action action, Reflection.InvocationInfo activateActionDescription) => ActivateActions.Add(new ActivateActionBehaviour.Sync(_state, action, activateActionDescription));
 
-        public void AddDeactivateAction(Action action, Reflection.InvocationInfo deactivateActionDescription)
-        {
-            DeactivateActions.Add(new DeactivateActionBehaviour.Sync(_state, action, deactivateActionDescription));
-        }
+        public void AddDeactivateAction(Action action, Reflection.InvocationInfo deactivateActionDescription) => DeactivateActions.Add(new DeactivateActionBehaviour.Sync(_state, action, deactivateActionDescription));
 
-        public void AddEntryAction(TTrigger trigger, Action<Transition, object[]> action, Reflection.InvocationInfo entryActionDescription)
-        {
-            EntryActions.Add(new EntryActionBehavior.SyncFrom<TTrigger>(trigger, action, entryActionDescription));
-        }
+        public void AddEntryAction(TTrigger trigger, Action<Transition, object[]> action, Reflection.InvocationInfo entryActionDescription) => EntryActions.Add(new EntryActionBehavior.SyncFrom<TTrigger>(trigger, action, entryActionDescription));
 
-        public void AddEntryAction(Action<Transition, object[]> action, Reflection.InvocationInfo entryActionDescription)
-        {
-            EntryActions.Add(new EntryActionBehavior.Sync(action, entryActionDescription));
-        }
+        public void AddEntryAction(Action<Transition, object[]> action, Reflection.InvocationInfo entryActionDescription) => EntryActions.Add(new EntryActionBehavior.Sync(action, entryActionDescription));
 
-        public void AddExitAction(Action<Transition> action, Reflection.InvocationInfo exitActionDescription)
-        {
-            ExitActions.Add(new ExitActionBehavior.Sync(action, exitActionDescription));
-        }
+        public void AddExitAction(Action<Transition> action, Reflection.InvocationInfo exitActionDescription) => ExitActions.Add(new ExitActionBehavior.Sync(action, exitActionDescription));
 
         public void Activate()
         {
@@ -289,20 +268,14 @@ public partial class StateMachine<TState, TTrigger>
 
         public TState UnderlyingState => _state;
 
-        public void AddSubstate(StateRepresentation substate)
-        {
-            _substates.Add(substate);
-        }
+        public void AddSubstate(StateRepresentation substate) => _substates.Add(substate);
 
         /// <summary>
         /// Checks if the state is in the set of this state or its sub-states
         /// </summary>
         /// <param name="state">The state to check</param>
         /// <returns>True if included</returns>
-        public bool Includes(TState state)
-        {
-            return _state.Equals(state) || _substates.Any(s => s.Includes(state));
-        }
+        public bool Includes(TState state) => _state.Equals(state) || _substates.Any(s => s.Includes(state));
 
         /// <summary>
         /// Checks if the state is in the set of this state or a super-state

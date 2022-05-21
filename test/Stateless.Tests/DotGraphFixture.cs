@@ -16,10 +16,7 @@ public class DotGraphFixture
     static readonly string DestinationFolder = "c:\\temp\\";
 #endif
 
-    bool IsTrue()
-    {
-        return true;
-    }
+    bool IsTrue() => true;
 
     void OnEntry()
     {
@@ -561,5 +558,5 @@ public class DotGraphFixture
 
     private void TestEntryAction() { }
     private void TestEntryActionString(string val) { }
-    private State DestinationSelector() { return State.A; }
+    private State DestinationSelector() => State.A;
 }

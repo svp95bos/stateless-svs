@@ -7,15 +7,9 @@ public partial class StateMachine<TState, TTrigger>
 {
     internal partial class StateRepresentation
     {
-        public void AddActivateAction(Func<Task> action, Reflection.InvocationInfo activateActionDescription)
-        {
-            ActivateActions.Add(new ActivateActionBehaviour.Async(_state, action, activateActionDescription));
-        }
+        public void AddActivateAction(Func<Task> action, Reflection.InvocationInfo activateActionDescription) => ActivateActions.Add(new ActivateActionBehaviour.Async(_state, action, activateActionDescription));
 
-        public void AddDeactivateAction(Func<Task> action, Reflection.InvocationInfo deactivateActionDescription)
-        {
-            DeactivateActions.Add(new DeactivateActionBehaviour.Async(_state, action, deactivateActionDescription));
-        }
+        public void AddDeactivateAction(Func<Task> action, Reflection.InvocationInfo deactivateActionDescription) => DeactivateActions.Add(new DeactivateActionBehaviour.Async(_state, action, deactivateActionDescription));
 
         public void AddEntryAction(TTrigger trigger, Func<Transition, object[], Task> action, Reflection.InvocationInfo entryActionDescription)
         {
@@ -45,10 +39,7 @@ public partial class StateMachine<TState, TTrigger>
                     entryActionDescription));
         }
 
-        public void AddExitAction(Func<Transition, Task> action, Reflection.InvocationInfo exitActionDescription)
-        {
-            ExitActions.Add(new ExitActionBehavior.Async(action, exitActionDescription));
-        }
+        public void AddExitAction(Func<Transition, Task> action, Reflection.InvocationInfo exitActionDescription) => ExitActions.Add(new ExitActionBehavior.Async(action, exitActionDescription));
 
         public async Task ActivateAsync()
         {

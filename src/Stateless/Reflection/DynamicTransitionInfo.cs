@@ -35,20 +35,14 @@ public class DynamicStateInfos : List<DynamicStateInfo>
     /// </summary>
     /// <param name="destinationState"></param>
     /// <param name="criterion"></param>
-    public void Add(string destinationState, string criterion)
-    {
-        base.Add(new DynamicStateInfo(destinationState, criterion));
-    }
+    public void Add(string destinationState, string criterion) => base.Add(new DynamicStateInfo(destinationState, criterion));
 
     /// <summary>
     /// Add a DynamicStateInfo with less typing
     /// </summary>
     /// <param name="destinationState"></param>
     /// <param name="criterion"></param>
-    public void Add<TState>(TState destinationState, string criterion)
-    {
-        base.Add(new DynamicStateInfo(destinationState.ToString(), criterion));
-    }
+    public void Add<TState>(TState destinationState, string criterion) => base.Add(new DynamicStateInfo(destinationState.ToString(), criterion));
 }
 
 /// <summary>

@@ -35,10 +35,7 @@ public class InternalTransitionAsyncFixture
         return true;
     }
 
-    private async Task ChangePaymentState(Order order, PaymentStatus paymentStatus)
-    {
-        await Task.FromResult(order.PaymentStatus = paymentStatus);
-    }
+    private async Task ChangePaymentState(Order order, PaymentStatus paymentStatus) => await Task.FromResult(order.PaymentStatus = paymentStatus);
 
     private enum OrderStatus { OrderPlaced }
     private enum PaymentStatus { Pending, Completed }

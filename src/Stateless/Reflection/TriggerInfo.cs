@@ -18,8 +18,5 @@ public class TriggerInfo
     /// <summary>
     /// Describes the trigger.
     /// </summary>
-    public override string ToString()
-    {
-        return UnderlyingTrigger?.ToString() ?? "<null>";
-    }
+    public override string ToString() => UnderlyingTrigger?.ToString() ?? "<null>";
 }

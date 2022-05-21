@@ -357,10 +357,7 @@ public class StateRepresentationFixture
         sub.Superstate = super;
     }
 
-    StateMachine<State, Trigger>.StateRepresentation CreateRepresentation(State state)
-    {
-        return new StateMachine<State, Trigger>.StateRepresentation(state);
-    }
+    StateMachine<State, Trigger>.StateRepresentation CreateRepresentation(State state) => new(state);
 
     // Issue #398 - Set guard description if substate transition fails
     [Fact]

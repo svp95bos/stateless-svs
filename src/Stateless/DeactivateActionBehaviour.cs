@@ -27,10 +27,7 @@ public partial class StateMachine<TState, TTrigger>
                 _action = action;
             }
 
-            public override void Execute()
-            {
-                _action();
-            }
+            public override void Execute() => _action();
 
             public override Task ExecuteAsync()
             {
@@ -56,10 +53,7 @@ public partial class StateMachine<TState, TTrigger>
                      "Use asynchronous version of Deactivate [DeactivateAsync]");
             }
 
-            public override Task ExecuteAsync()
-            {
-                return _action();
-            }
+            public override Task ExecuteAsync() => _action();
         }
     }
 }

@@ -117,13 +117,7 @@ public class UmlDotGraphStyle : GraphStyleBase
     /// <param name="nodeName">Name of the node</param>
     /// <param name="label">Label for the node</param>
     /// <returns></returns>
-    public override string FormatOneDecisionNode(string nodeName, string label)
-    {
-        return $"\"{nodeName}\" [shape = \"diamond\", label = \"{label}\"];\n";
-    }
+    public override string FormatOneDecisionNode(string nodeName, string label) => $"\"{nodeName}\" [shape = \"diamond\", label = \"{label}\"];\n";
 
-    internal string FormatOneLine(string fromNodeName, string toNodeName, string label)
-    {
-        return $"\"{fromNodeName}\" -> \"{toNodeName}\" [style=\"solid\", label=\"{label}\"];";
-    }
+    internal string FormatOneLine(string fromNodeName, string toNodeName, string label) => $"\"{fromNodeName}\" -> \"{toNodeName}\" [style=\"solid\", label=\"{label}\"];";
 }

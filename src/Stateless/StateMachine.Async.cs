@@ -36,10 +36,7 @@ public partial class StateMachine<TState, TTrigger>
     /// <param name="trigger">The trigger to fire.</param>
     /// <exception cref="System.InvalidOperationException">The current state does
     /// not allow the trigger to be fired.</exception>
-    public Task FireAsync(TTrigger trigger)
-    {
-        return InternalFireAsync(trigger, Array.Empty<object>());
-    }
+    public Task FireAsync(TTrigger trigger) => InternalFireAsync(trigger, Array.Empty<object>());
 
     /// <summary>
     /// Transition from the current state via the specified trigger in async fashion.

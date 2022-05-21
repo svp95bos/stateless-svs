@@ -10,10 +10,7 @@ public partial class StateMachine<TState, TTrigger>
 
         #region Generic TArg0, ... to object[] converters
 
-        public static Func<object[], bool> ToPackedGuard<TArg0>(Func<TArg0, bool> guard)
-        {
-            return args => guard(ParameterConversion.Unpack<TArg0>(args, 0));
-        }
+        public static Func<object[], bool> ToPackedGuard<TArg0>(Func<TArg0, bool> guard) => args => guard(ParameterConversion.Unpack<TArg0>(args, 0));
 
         public static Func<object[], bool> ToPackedGuard<TArg0, TArg1>(Func<TArg0, TArg1, bool> guard)
         {
@@ -92,10 +89,7 @@ public partial class StateMachine<TState, TTrigger>
         /// GuardConditionsMet is true if all of the guard functions return true
         /// or if there are no guard functions
         /// </summary>
-        public bool GuardConditionsMet(object[] args)
-        {
-            return Conditions.All(c => c.Guard == null || c.Guard(args));
-        }
+        public bool GuardConditionsMet(object[] args) => Conditions.All(c => c.Guard == null || c.Guard(args));
 
         /// <summary>
         /// UnmetGuardConditions is a list of the descriptions of all guard conditions

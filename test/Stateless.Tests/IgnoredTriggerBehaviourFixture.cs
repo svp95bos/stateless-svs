@@ -22,10 +22,7 @@ public class IgnoredTriggerBehaviourFixture
         Assert.Equal(Trigger.X, ignored.Trigger);
     }
 
-    protected bool False(params object[] args)
-    {
-        return false;
-    }
+    protected bool False(params object[] args) => false;
 
     [Fact]
     public void WhenGuardConditionFalse_IsGuardConditionMetIsFalse()
@@ -36,10 +33,7 @@ public class IgnoredTriggerBehaviourFixture
         Assert.False(ignored.GuardConditionsMet());
     }
 
-    protected bool True(params object[] args)
-    {
-        return true;
-    }
+    protected bool True(params object[] args) => true;
 
     [Fact]
     public void WhenGuardConditionTrue_IsGuardConditionMetIsTrue()

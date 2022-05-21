@@ -31,14 +31,8 @@ public partial class StateMachine<TState, TTrigger>
         }
 #endif
 
-        public void Register(Action<Transition> action)
-        {
-            _onTransitioned += action;
-        }
+        public void Register(Action<Transition> action) => _onTransitioned += action;
 
-        public void Register(Func<Transition, Task> action)
-        {
-            _onTransitionedAsync.Add(action);
-        }
+        public void Register(Func<Transition, Task> action) => _onTransitionedAsync.Add(action);
     }
 }

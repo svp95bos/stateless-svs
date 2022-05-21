@@ -50,23 +50,15 @@ public class Bug
             .Permit(Trigger.Assign, State.Assigned);
     }
 
-    public void Close()
-    {
-        _machine.Fire(Trigger.Close);
-    }
+    public void Close() => _machine.Fire(Trigger.Close);
 
-    public void Assign(string assignee)
-    {
+    public void Assign(string assignee) =>
         // This is how a trigger with parameter is used, the parameter is supplied to the state machine as a parameter to the Fire method.
         _machine.Fire(_assignTrigger, assignee);
-    }
 
     public bool CanAssign => _machine.CanFire(Trigger.Assign);
 
-    public void Defer()
-    {
-        _machine.Fire(Trigger.Defer);
-    }
+    public void Defer() => _machine.Fire(Trigger.Defer);
     /// <summary>
     /// This method is called automatically when the Assigned state is entered, but only when the trigger is _assignTrigger.
     /// </summary>
@@ -84,18 +76,9 @@ public class Bug
     /// <summary>
     /// This method is called when the state machine exits the Assigned state
     /// </summary>
-    private void OnDeassigned()
-    {
-        SendEmailToAssignee("You're off the hook.");
-    }
+    private void OnDeassigned() => SendEmailToAssignee("You're off the hook.");
 
-    private void SendEmailToAssignee(string message)
-    {
-        Console.WriteLine("{0}, RE {1}: {2}", _assignee, _title, message);
-    }
+    private void SendEmailToAssignee(string message) => Console.WriteLine("{0}, RE {1}: {2}", _assignee, _title, message);
 
-    public string ToDotGraph()
-    {
-        return UmlDotGraph.Format(_machine.GetInfo());
-    }
+    public string ToDotGraph() => UmlDotGraph.Format(_machine.GetInfo());
 }

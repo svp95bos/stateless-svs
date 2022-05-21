@@ -67,20 +67,11 @@ public class PhoneCall
         _machine.OnTransitioned(t => Console.WriteLine($"OnTransitioned: {t.Source} -> {t.Destination} via {t.Trigger}({string.Join(", ", t.Parameters)})"));
     }
 
-    void OnSetVolume(int volume)
-    {
-        Console.WriteLine("Volume set to " + volume + "!");
-    }
+    void OnSetVolume(int volume) => Console.WriteLine("Volume set to " + volume + "!");
 
-    void OnUnmute()
-    {
-        Console.WriteLine("Microphone unmuted!");
-    }
+    void OnUnmute() => Console.WriteLine("Microphone unmuted!");
 
-    void OnMute()
-    {
-        Console.WriteLine("Microphone muted!");
-    }
+    void OnMute() => Console.WriteLine("Microphone muted!");
 
     void OnDialed(string callee)
     {
@@ -88,58 +79,25 @@ public class PhoneCall
         Console.WriteLine("[Phone Call] placed for : [{0}]", _callee);
     }
 
-    void StartCallTimer()
-    {
-        Console.WriteLine("[Timer:] Call started at {0}", DateTime.Now);
-    }
+    void StartCallTimer() => Console.WriteLine("[Timer:] Call started at {0}", DateTime.Now);
 
-    void StopCallTimer()
-    {
-        Console.WriteLine("[Timer:] Call ended at {0}", DateTime.Now);
-    }
+    void StopCallTimer() => Console.WriteLine("[Timer:] Call ended at {0}", DateTime.Now);
 
-    public void Mute()
-    {
-        _machine.Fire(Trigger.MuteMicrophone);
-    }
+    public void Mute() => _machine.Fire(Trigger.MuteMicrophone);
 
-    public void Unmute()
-    {
-        _machine.Fire(Trigger.UnmuteMicrophone);
-    }
+    public void Unmute() => _machine.Fire(Trigger.UnmuteMicrophone);
 
-    public void SetVolume(int volume)
-    {
-        _machine.Fire(_setVolumeTrigger, volume);
-    }
+    public void SetVolume(int volume) => _machine.Fire(_setVolumeTrigger, volume);
 
-    public void Print()
-    {
-        Console.WriteLine("[{1}] placed call and [Status:] {0}", _machine.State, _caller);
-    }
+    public void Print() => Console.WriteLine("[{1}] placed call and [Status:] {0}", _machine.State, _caller);
 
-    public void Dialed(string callee)
-    {
-        _machine.Fire(_setCalleeTrigger, callee);
-    }
+    public void Dialed(string callee) => _machine.Fire(_setCalleeTrigger, callee);
 
-    public void Connected()
-    {
-        _machine.Fire(Trigger.CallConnected);
-    }
+    public void Connected() => _machine.Fire(Trigger.CallConnected);
 
-    public void Hold()
-    {
-        _machine.Fire(Trigger.PlacedOnHold);
-    }
+    public void Hold() => _machine.Fire(Trigger.PlacedOnHold);
 
-    public void Resume()
-    {
-        _machine.Fire(Trigger.TakenOffHold);
-    }
+    public void Resume() => _machine.Fire(Trigger.TakenOffHold);
 
-    public string ToDotGraph()
-    {
-        return UmlDotGraph.Format(_machine.GetInfo());
-    }
+    public string ToDotGraph() => UmlDotGraph.Format(_machine.GetInfo());
 }

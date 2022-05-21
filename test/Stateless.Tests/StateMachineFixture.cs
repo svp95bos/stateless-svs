@@ -14,10 +14,7 @@ public class StateMachineFixture
 
     int _numCalls = 0;
 
-    void CountCalls()
-    {
-        _numCalls++;
-    }
+    void CountCalls() => _numCalls++;
 
     [Fact]
     public void CanUseReferenceTypeMarkers()

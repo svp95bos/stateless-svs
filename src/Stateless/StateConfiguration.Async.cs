@@ -149,20 +149,14 @@ public partial class StateMachine<TState, TTrigger>
         /// <param name="trigger"></param>
         /// <param name="entryAction"></param>
         /// <returns></returns>
-        public StateConfiguration InternalTransitionAsync(TTrigger trigger, Func<Transition, Task> entryAction)
-        {
-            return InternalTransitionAsyncIf(trigger, () => true, entryAction);
-        }
+        public StateConfiguration InternalTransitionAsync(TTrigger trigger, Func<Transition, Task> entryAction) => InternalTransitionAsyncIf(trigger, () => true, entryAction);
         /// <summary>
         /// Add an internal transition to the state machine. An internal action does not cause the Exit and Entry actions to be triggered, and does not change the state of the state machine
         /// </summary>
         /// <param name="trigger">The accepted trigger</param>
         /// <param name="internalAction">The asynchronous action performed by the internal transition</param>
         /// <returns></returns>
-        public StateConfiguration InternalTransitionAsync(TTrigger trigger, Func<Task> internalAction)
-        {
-            return InternalTransitionAsyncIf(trigger, () => true, internalAction);
-        }
+        public StateConfiguration InternalTransitionAsync(TTrigger trigger, Func<Task> internalAction) => InternalTransitionAsyncIf(trigger, () => true, internalAction);
         /// <summary>
         /// Add an internal transition to the state machine. An internal action does not cause the Exit and Entry actions to be triggered, and does not change the state of the state machine
         /// </summary>
@@ -170,10 +164,7 @@ public partial class StateMachine<TState, TTrigger>
         /// <param name="trigger">The accepted trigger</param>
         /// <param name="internalAction">The asynchronous action performed by the internal transition</param>
         /// <returns></returns>
-        public StateConfiguration InternalTransitionAsync<TArg0>(TTrigger trigger, Func<Transition, Task> internalAction)
-        {
-            return InternalTransitionAsyncIf(trigger, () => true, internalAction);
-        }
+        public StateConfiguration InternalTransitionAsync<TArg0>(TTrigger trigger, Func<Transition, Task> internalAction) => InternalTransitionAsyncIf(trigger, () => true, internalAction);
         /// <summary>
         /// Add an internal transition to the state machine. An internal action does not cause the Exit and Entry actions to be triggered, and does not change the state of the state machine
         /// </summary>
@@ -181,10 +172,7 @@ public partial class StateMachine<TState, TTrigger>
         /// <param name="trigger">The accepted trigger</param>
         /// <param name="internalAction">The asynchronous action performed by the internal transition</param>
         /// <returns></returns>
-        public StateConfiguration InternalTransitionAsync<TArg0>(TriggerWithParameters<TArg0> trigger, Func<TArg0, Transition, Task> internalAction)
-        {
-            return InternalTransitionAsyncIf(trigger, () => true, internalAction);
-        }
+        public StateConfiguration InternalTransitionAsync<TArg0>(TriggerWithParameters<TArg0> trigger, Func<TArg0, Transition, Task> internalAction) => InternalTransitionAsyncIf(trigger, () => true, internalAction);
 
         /// <summary>
         /// Add an internal transition to the state machine. An internal action does not cause the Exit and Entry actions to be triggered, and does not change the state of the state machine
@@ -194,10 +182,7 @@ public partial class StateMachine<TState, TTrigger>
         /// <param name="trigger">The accepted trigger</param>
         /// <param name="internalAction">The asynchronous action performed by the internal transition</param>
         /// <returns></returns>
-        public StateConfiguration InternalTransitionAsync<TArg0, TArg1>(TriggerWithParameters<TArg0, TArg1> trigger, Func<TArg0, TArg1, Transition, Task> internalAction)
-        {
-            return InternalTransitionAsyncIf(trigger, () => true, internalAction);
-        }
+        public StateConfiguration InternalTransitionAsync<TArg0, TArg1>(TriggerWithParameters<TArg0, TArg1> trigger, Func<TArg0, TArg1, Transition, Task> internalAction) => InternalTransitionAsyncIf(trigger, () => true, internalAction);
 
         /// <summary>
         /// Add an internal transition to the state machine. An internal action does not cause the Exit and Entry actions to be triggered, and does not change the state of the state machine
@@ -208,10 +193,7 @@ public partial class StateMachine<TState, TTrigger>
         /// <param name="trigger">The accepted trigger</param>
         /// <param name="internalAction">The asynchronous action performed by the internal transition</param>
         /// <returns></returns>
-        public StateConfiguration InternalTransitionAsync<TArg0, TArg1, TArg2>(TriggerWithParameters<TArg0, TArg1, TArg2> trigger, Func<TArg0, TArg1, TArg2, Transition, Task> internalAction)
-        {
-            return InternalTransitionAsyncIf(trigger, () => true, internalAction);
-        }
+        public StateConfiguration InternalTransitionAsync<TArg0, TArg1, TArg2>(TriggerWithParameters<TArg0, TArg1, TArg2> trigger, Func<TArg0, TArg1, TArg2, Transition, Task> internalAction) => InternalTransitionAsyncIf(trigger, () => true, internalAction);
 
         /// <summary>
         /// Specify an asynchronous action that will execute when activating

@@ -14,10 +14,7 @@ public class ReflectionFixture
 {
     static readonly string UserDescription = "UserDescription";
 
-    bool IsTrue()
-    {
-        return true;
-    }
+    bool IsTrue() => true;
 
     void OnEntry()
     {
@@ -52,29 +49,17 @@ public class ReflectionFixture
 
     }
 
-    Task OnActivateAsync()
-    {
-        return TaskResult.Done;
-    }
+    Task OnActivateAsync() => TaskResult.Done;
 
     void OnActivate()
     {
     }
 
-    Task OnEntryTransAsync(StateMachine<State, Trigger>.Transition trans)
-    {
-        return TaskResult.Done;
-    }
+    Task OnEntryTransAsync(StateMachine<State, Trigger>.Transition trans) => TaskResult.Done;
 
-    Task OnEntryAsync()
-    {
-        return TaskResult.Done;
-    }
+    Task OnEntryAsync() => TaskResult.Done;
 
-    Task OnDeactivateAsync()
-    {
-        return TaskResult.Done;
-    }
+    Task OnDeactivateAsync() => TaskResult.Done;
 
     void OnDeactivate()
     {
@@ -84,20 +69,11 @@ public class ReflectionFixture
     {
     }
 
-    Task OnExitAsync()
-    {
-        return TaskResult.Done;
-    }
+    Task OnExitAsync() => TaskResult.Done;
 
-    Task OnExitTransAsync(StateMachine<State, Trigger>.Transition trans)
-    {
-        return TaskResult.Done;
-    }
+    Task OnExitTransAsync(StateMachine<State, Trigger>.Transition trans) => TaskResult.Done;
 
-    bool Permit()
-    {
-        return true;
-    }
+    bool Permit() => true;
 
     [Fact]
     public void SimpleTransition_Binding()
@@ -855,10 +831,7 @@ public class ReflectionFixture
         */
     }
 
-    State NextState()
-    {
-        return State.D;
-    }
+    State NextState() => State.D;
 
     [Fact]
     public void TransitionGuardNames()

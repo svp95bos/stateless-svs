@@ -20,10 +20,7 @@ public class InvocationInfo
     }
     readonly Timing _timing;
 
-    internal static InvocationInfo Create(Delegate method, string description, Timing timing = Timing.Synchronous)
-    {
-        return new InvocationInfo(method?.TryGetMethodName(), description, timing);
-    }
+    internal static InvocationInfo Create(Delegate method, string description, Timing timing = Timing.Synchronous) => new(method?.TryGetMethodName(), description, timing);
 
     /// <summary>
     /// Creates a new instance of <see cref="InvocationInfo"/>.

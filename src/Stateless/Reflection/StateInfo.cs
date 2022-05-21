@@ -166,8 +166,5 @@ public class StateInfo
     /// <summary>
     /// Passes through to the value's ToString.
     /// </summary>
-    public override string ToString()
-    {
-        return UnderlyingState?.ToString() ?? "<null>";
-    }
+    public override string ToString() => UnderlyingState?.ToString() ?? "<null>";
 }

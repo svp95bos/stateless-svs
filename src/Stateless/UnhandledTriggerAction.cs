@@ -16,10 +16,7 @@ public partial class StateMachine<TState, TTrigger>
                 _action = action;
             }
 
-            public override void Execute(TState state, TTrigger trigger, ICollection<string> unmetGuards)
-            {
-                _action(state, trigger, unmetGuards);
-            }
+            public override void Execute(TState state, TTrigger trigger, ICollection<string> unmetGuards) => _action(state, trigger, unmetGuards);
 
             public override Task ExecuteAsync(TState state, TTrigger trigger, ICollection<string> unmetGuards)
             {
@@ -44,10 +41,7 @@ public partial class StateMachine<TState, TTrigger>
                     "Use asynchronous version of Fire [FireAsync]");
             }
 
-            public override Task ExecuteAsync(TState state, TTrigger trigger, ICollection<string> unmetGuards)
-            {
-                return _action(state, trigger, unmetGuards);
-            }
+            public override Task ExecuteAsync(TState state, TTrigger trigger, ICollection<string> unmetGuards) => _action(state, trigger, unmetGuards);
         }
     }
 }

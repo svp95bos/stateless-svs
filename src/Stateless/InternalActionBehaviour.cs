@@ -16,10 +16,7 @@ public partial class StateMachine<TState, TTrigger>
                 _action = action;
             }
 
-            public override void Execute(Transition transition, object[] args)
-            {
-                _action(transition, args);
-            }
+            public override void Execute(Transition transition, object[] args) => _action(transition, args);
 
             public override Task ExecuteAsync(Transition transition, object[] args)
             {
@@ -44,10 +41,7 @@ public partial class StateMachine<TState, TTrigger>
                      "Use asynchronous version of Fire [FireAsync]");
             }
 
-            public override Task ExecuteAsync(Transition transition, object[] args)
-            {
-                return _action(transition, args);
-            }
+            public override Task ExecuteAsync(Transition transition, object[] args) => _action(transition, args);
         }
     }
 }

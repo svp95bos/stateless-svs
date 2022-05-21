@@ -54,35 +54,17 @@ public class Member
             .Permit(MemberTriggers.Reactivate, MembershipState.Active);
     }
 
-    public void Terminate()
-    {
-        _stateMachine.Fire(MemberTriggers.Terminate);
-    }
+    public void Terminate() => _stateMachine.Fire(MemberTriggers.Terminate);
 
-    public void Suspend()
-    {
-        _stateMachine.Fire(MemberTriggers.Suspend);
-    }
+    public void Suspend() => _stateMachine.Fire(MemberTriggers.Suspend);
 
-    public void Reactivate()
-    {
-        _stateMachine.Fire(MemberTriggers.Reactivate);
-    }
+    public void Reactivate() => _stateMachine.Fire(MemberTriggers.Reactivate);
 
-    public string ToJson()
-    {
-        return JsonConvert.SerializeObject(this);
-    }
+    public string ToJson() => JsonConvert.SerializeObject(this);
 
-    public static Member FromJson(string jsonString)
-    {
-        return JsonConvert.DeserializeObject<Member>(jsonString);
-    }
+    public static Member FromJson(string jsonString) => JsonConvert.DeserializeObject<Member>(jsonString);
 
-    public bool Equals(Member anotherMember)
-    {
-        return ((State == anotherMember.State) && (Name == anotherMember.Name));
-    }
+    public bool Equals(Member anotherMember) => ((State == anotherMember.State) && (Name == anotherMember.Name));
 }
 
 

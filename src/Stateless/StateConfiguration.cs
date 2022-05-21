@@ -47,10 +47,7 @@ public partial class StateMachine<TState, TTrigger>
         /// <param name="trigger"></param>
         /// <param name="entryAction"></param>
         /// <returns></returns>
-        public StateConfiguration InternalTransition(TTrigger trigger, Action<Transition> entryAction)
-        {
-            return InternalTransitionIf(trigger, t => true, entryAction);
-        }
+        public StateConfiguration InternalTransition(TTrigger trigger, Action<Transition> entryAction) => InternalTransitionIf(trigger, t => true, entryAction);
 
         /// <summary>
         /// Add an internal transition to the state machine. An internal action does not cause the Exit and Entry actions to be triggered, and does not change the state of the state machine
@@ -77,10 +74,7 @@ public partial class StateMachine<TState, TTrigger>
         /// <param name="trigger">The accepted trigger</param>
         /// <param name="internalAction">The action performed by the internal transition</param>
         /// <returns></returns>
-        public StateConfiguration InternalTransition(TTrigger trigger, Action internalAction)
-        {
-            return InternalTransitionIf(trigger, t => true, internalAction);
-        }
+        public StateConfiguration InternalTransition(TTrigger trigger, Action internalAction) => InternalTransitionIf(trigger, t => true, internalAction);
 
         /// <summary>
         /// Add an internal transition to the state machine. An internal action does not cause the Exit and Entry actions to be triggered, and does not change the state of the state machine
@@ -128,10 +122,7 @@ public partial class StateMachine<TState, TTrigger>
         /// <param name="trigger">The accepted trigger</param>
         /// <param name="internalAction">The action performed by the internal transition</param>
         /// <returns></returns>
-        public StateConfiguration InternalTransition<TArg0>(TTrigger trigger, Action<Transition> internalAction)
-        {
-            return InternalTransitionIf(trigger, t => true, internalAction);
-        }
+        public StateConfiguration InternalTransition<TArg0>(TTrigger trigger, Action<Transition> internalAction) => InternalTransitionIf(trigger, t => true, internalAction);
 
         /// <summary>
         /// Add an internal transition to the state machine. An internal action does not cause the Exit and Entry actions to be triggered, and does not change the state of the state machine
@@ -140,10 +131,7 @@ public partial class StateMachine<TState, TTrigger>
         /// <param name="trigger">The accepted trigger</param>
         /// <param name="internalAction">The action performed by the internal transition</param>
         /// <returns></returns>
-        public StateConfiguration InternalTransition<TArg0>(TriggerWithParameters<TArg0> trigger, Action<TArg0, Transition> internalAction)
-        {
-            return InternalTransitionIf(trigger, t => true, internalAction);
-        }
+        public StateConfiguration InternalTransition<TArg0>(TriggerWithParameters<TArg0> trigger, Action<TArg0, Transition> internalAction) => InternalTransitionIf(trigger, t => true, internalAction);
 
         /// <summary>
         /// Add an internal transition to the state machine. An internal action does not cause the Exit and Entry actions to be triggered, and does not change the state of the state machine
@@ -179,10 +167,7 @@ public partial class StateMachine<TState, TTrigger>
         /// <param name="internalAction">The action performed by the internal transition</param>
         /// <returns></returns>
         public StateConfiguration InternalTransition<TArg0, TArg1>(TriggerWithParameters<TArg0, TArg1> trigger,
-            Action<TArg0, TArg1, Transition> internalAction)
-        {
-            return InternalTransitionIf(trigger, t => true, internalAction);
-        }
+            Action<TArg0, TArg1, Transition> internalAction) => InternalTransitionIf(trigger, t => true, internalAction);
 
         /// <summary>
         /// Add an internal transition to the state machine. An internal action does not cause the Exit and Entry actions to be triggered, and does not change the state of the state machine
@@ -317,10 +302,7 @@ public partial class StateMachine<TState, TTrigger>
         /// <param name="trigger">The accepted trigger</param>
         /// <param name="internalAction">The action performed by the internal transition</param>
         /// <returns></returns>
-        public StateConfiguration InternalTransition<TArg0, TArg1, TArg2>(TriggerWithParameters<TArg0, TArg1, TArg2> trigger, Action<TArg0, TArg1, TArg2, Transition> internalAction)
-        {
-            return InternalTransitionIf(trigger, t => true, internalAction);
-        }
+        public StateConfiguration InternalTransition<TArg0, TArg1, TArg2>(TriggerWithParameters<TArg0, TArg1, TArg2> trigger, Action<TArg0, TArg1, TArg2, Transition> internalAction) => InternalTransitionIf(trigger, t => true, internalAction);
 
         /// <summary>
         /// Accept the specified trigger and transition to the destination state.
@@ -534,10 +516,7 @@ public partial class StateMachine<TState, TTrigger>
         /// Applies to the current state only. Will not re-execute superstate actions, or
         /// cause actions to execute transitioning between super- and sub-states.
         /// </remarks>
-        public StateConfiguration PermitReentry(TTrigger trigger)
-        {
-            return InternalPermitReentryIf(trigger, _representation.UnderlyingState, null);
-        }
+        public StateConfiguration PermitReentry(TTrigger trigger) => InternalPermitReentryIf(trigger, _representation.UnderlyingState, null);
 
         /// <summary>
         /// Accept the specified trigger, execute exit actions and re-execute entry actions.
@@ -1484,10 +1463,7 @@ public partial class StateMachine<TState, TTrigger>
         /// <param name="possibleDestinationStates">Optional list of possible target states.</param>
         /// <returns>The receiver.</returns>
         public StateConfiguration PermitDynamicIf(TTrigger trigger, Func<TState> destinationStateSelector,
-            Func<bool> guard, string guardDescription = null, Reflection.DynamicStateInfos possibleDestinationStates = null)
-        {
-            return PermitDynamicIf(trigger, destinationStateSelector, null, guard, guardDescription, possibleDestinationStates);
-        }
+            Func<bool> guard, string guardDescription = null, Reflection.DynamicStateInfos possibleDestinationStates = null) => PermitDynamicIf(trigger, destinationStateSelector, null, guard, guardDescription, possibleDestinationStates);
 
         /// <summary>
         /// Accept the specified trigger and transition to the destination state, calculated
@@ -1529,10 +1505,7 @@ public partial class StateMachine<TState, TTrigger>
         /// trigger to be accepted.</param>
         /// <param name="possibleDestinationStates">Optional list of possible target states.</param>
         /// <returns>The receiver.</returns>
-        public StateConfiguration PermitDynamicIf(TTrigger trigger, Func<TState> destinationStateSelector, Reflection.DynamicStateInfos possibleDestinationStates = null, params Tuple<Func<bool>, string>[] guards)
-        {
-            return PermitDynamicIf(trigger, destinationStateSelector, null, possibleDestinationStates, guards);
-        }
+        public StateConfiguration PermitDynamicIf(TTrigger trigger, Func<TState> destinationStateSelector, Reflection.DynamicStateInfos possibleDestinationStates = null, params Tuple<Func<bool>, string>[] guards) => PermitDynamicIf(trigger, destinationStateSelector, null, possibleDestinationStates, guards);
 
         /// <summary>
         /// Accept the specified trigger and transition to the destination state, calculated
@@ -1605,10 +1578,7 @@ public partial class StateMachine<TState, TTrigger>
         /// that the trigger will cause a transition to.</param>            
         /// <returns>The receiver.</returns>
         /// <typeparam name="TArg0">Type of the first trigger argument.</typeparam>
-        public StateConfiguration PermitDynamicIf<TArg0>(TriggerWithParameters<TArg0> trigger, Func<TArg0, TState> destinationStateSelector)
-        {
-            return PermitDynamicIf<TArg0>(trigger, destinationStateSelector, null, new Tuple<Func<bool>, string>[0]);
-        }
+        public StateConfiguration PermitDynamicIf<TArg0>(TriggerWithParameters<TArg0> trigger, Func<TArg0, TState> destinationStateSelector) => PermitDynamicIf<TArg0>(trigger, destinationStateSelector, null, new Tuple<Func<bool>, string>[0]);
 
         /// <summary>
         /// Accept the specified trigger and transition to the destination state, calculated

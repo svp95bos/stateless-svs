@@ -111,10 +111,7 @@ public partial class StateMachine<TState, TTrigger>
     /// <summary>
     /// The currently-permissible trigger values.
     /// </summary>
-    public IEnumerable<TTrigger> GetPermittedTriggers(params object[] args)
-    {
-        return CurrentRepresentation.GetPermittedTriggers(args);
-    }
+    public IEnumerable<TTrigger> GetPermittedTriggers(params object[] args) => CurrentRepresentation.GetPermittedTriggers(args);
 
     StateRepresentation CurrentRepresentation => GetRepresentation(State);
 
@@ -168,10 +165,7 @@ public partial class StateMachine<TState, TTrigger>
     /// </summary>
     /// <param name="state">The state to configure.</param>
     /// <returns>A configuration object through which the state can be configured.</returns>
-    public StateConfiguration Configure(TState state)
-    {
-        return new StateConfiguration(this, GetRepresentation(state), GetRepresentation);
-    }
+    public StateConfiguration Configure(TState state) => new(this, GetRepresentation(state), GetRepresentation);
 
     /// <summary>
     /// Transition from the current state via the specified trigger.
@@ -182,10 +176,7 @@ public partial class StateMachine<TState, TTrigger>
     /// <param name="trigger">The trigger to fire.</param>
     /// <exception cref="System.InvalidOperationException">The current state does
     /// not allow the trigger to be fired.</exception>
-    public void Fire(TTrigger trigger)
-    {
-        InternalFire(trigger, new object[0]);
-    }
+    public void Fire(TTrigger trigger) => InternalFire(trigger, new object[0]);
 
     /// <summary>
     /// Transition from the current state via the specified trigger.
@@ -543,10 +534,7 @@ public partial class StateMachine<TState, TTrigger>
     /// <param name="state">The state to test for.</param>
     /// <returns>True if the current state is equal to, or a substate of,
     /// the supplied state.</returns>
-    public bool IsInState(TState state)
-    {
-        return CurrentRepresentation.IsIncludedIn(state);
-    }
+    public bool IsInState(TState state) => CurrentRepresentation.IsIncludedIn(state);
 
     /// <summary>
     /// Returns true if <paramref name="trigger"/> can be fired
@@ -554,10 +542,7 @@ public partial class StateMachine<TState, TTrigger>
     /// </summary>
     /// <param name="trigger">Trigger to test.</param>
     /// <returns>True if the trigger can be fired, false otherwise.</returns>
-    public bool CanFire(TTrigger trigger)
-    {
-        return CurrentRepresentation.CanHandle(trigger);
-    }
+    public bool CanFire(TTrigger trigger) => CurrentRepresentation.CanHandle(trigger);
 
     /// <summary>
     /// Returns true if <paramref name="trigger"/> can be fired
@@ -566,10 +551,7 @@ public partial class StateMachine<TState, TTrigger>
     /// <param name="trigger">Trigger to test.</param>
     /// <param name="unmetGuards">Guard descriptions of unmet guards. If given trigger is not configured for current state, this will be null.</param>
     /// <returns>True if the trigger can be fired, false otherwise.</returns>
-    public bool CanFire(TTrigger trigger, out ICollection<string> unmetGuards)
-    {
-        return CurrentRepresentation.CanHandle(trigger, new object[] { }, out unmetGuards);
-    }
+    public bool CanFire(TTrigger trigger, out ICollection<string> unmetGuards) => CurrentRepresentation.CanHandle(trigger, new object[] { }, out unmetGuards);
 
     /// <summary>
     /// A human-readable representation of the state machine.
