@@ -22,12 +22,8 @@
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' OR '$(TargetFramework)' == 'netstandard2.0' ">
+  <PropertyGroup>
     <DefineConstants>$(DefineConstants);PORTABLE_REFLECTION;TASKS</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net472' OR '$(TargetFramework)' == 'net50'">
-    <DefineConstants>$(DefineConstants);TASKS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

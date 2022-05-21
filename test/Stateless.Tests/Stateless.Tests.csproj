@@ -3,7 +3,7 @@
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);TASKS</DefineConstants>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <TargetFrameworks>net50</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <AssemblyName>Stateless.Tests</AssemblyName>
     <AssemblyOriginatorKeyFile>../../asset/Stateless.snk</AssemblyOriginatorKeyFile>
@@ -27,15 +27,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Stateless\Stateless.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Stateless\Stateless.csproj" />
   </ItemGroup>
 
 </Project>
